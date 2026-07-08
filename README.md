@@ -40,7 +40,7 @@
 ## 프로젝트 구조
 
 ```
-game-deal/
+game-deal-hub/
 ├── backend/                      # Spring Boot
 │   └── src/main/
 │       ├── java/com/example/deal/

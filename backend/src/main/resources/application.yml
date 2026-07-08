@@ -1,0 +1,10 @@
+# Spring Boot 설정
+# PostgreSQL 접속정보 / Flyway / MyBatis 설정을 여기에 작성
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dealmoa
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  flyway:
+    enabled: true
