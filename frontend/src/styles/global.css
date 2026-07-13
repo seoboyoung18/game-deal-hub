@@ -1,0 +1,71 @@
+/* reset + base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI',
+    Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text-strong);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input {
+  font-family: inherit;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 로고 워드마크: 뒤에 보라 점 액센트 */
+.wordmark {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  font-size: 22px;
+  color: var(--text-strong);
+}
+.wordmark::after {
+  content: '.';
+  color: var(--brand);
+}

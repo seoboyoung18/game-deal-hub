@@ -1,10 +1,35 @@
-# Spring Boot 설정
-# PostgreSQL 접속정보 / Flyway / MyBatis 설정을 여기에 작성
-
 spring:
+  application:
+    name: deal
   datasource:
     url: jdbc:postgresql://localhost:5432/dealmoa
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
+    locations: classpath:db/migration
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.deal.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+# CheapShark 수집 설정 (외부는 수집 잡에서만 호출)
+cheapshark:
+  base-url: https://www.cheapshark.com/api/1.0
+  collect:
+    enabled: true
+    initial-delay-ms: 5000      # 앱 기동 5초 후 1차 수집
+    fixed-delay-ms: 21600000    # 수집 주기(ms). 기본 6시간. (8h=28800000 / 12h=43200000)
+    page-size: 60               # /deals 페이지당 최대 60
+    max-pages: 5                # 1회 수집 시 최대 페이지 수 (MVP, 5=약 300딜)
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.example.deal: DEBUG
+    org.mybatis: DEBUG

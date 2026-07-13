@@ -2,5 +2,91 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.deal.repository.DealMapper">
-    <!-- store -> game -> deal upsert 쿼리 작성 -->
+
+    <!-- ============ 수집(쓰기): store → game → deal 순서 (FK) ============ -->
+
+    <insert id="upsertStore">
+        INSERT INTO stores (store_id, store_name, is_active, icon_url)
+        VALUES (#{storeId}, #{storeName}, #{active}, #{iconUrl})
+        ON CONFLICT (store_id) DO UPDATE SET
+            store_name = EXCLUDED.store_name,
+            is_active  = EXCLUDED.is_active,
+            icon_url   = EXCLUDED.icon_url
+    </insert>
+
+    <insert id="upsertGame">
+        INSERT INTO games (game_id, title, steam_app_id, thumb_url,
+                           metacritic_score, steam_rating_pct, release_date)
+        VALUES (#{gameId}, #{title}, #{steamAppId}, #{thumbUrl},
+                #{metacriticScore}, #{steamRatingPct}, #{releaseDate})
+        ON CONFLICT (game_id) DO UPDATE SET
+            title            = EXCLUDED.title,
+            steam_app_id     = EXCLUDED.steam_app_id,
+            thumb_url        = EXCLUDED.thumb_url,
+            metacritic_score = EXCLUDED.metacritic_score,
+            steam_rating_pct = EXCLUDED.steam_rating_pct,
+            release_date     = EXCLUDED.release_date
+    </insert>
+
+    <!-- updated_at: INSERT 시 DEFAULT, UPDATE 시 트리거로 자동 갱신 -->
+    <insert id="upsertDeal">
+        INSERT INTO deals (deal_id, game_id, store_id, sale_price, normal_price,
+                           savings, currency, is_on_sale, last_change)
+        VALUES (#{dealId}, #{gameId}, #{storeId}, #{salePrice}, #{normalPrice},
+                #{savings}, #{currency}, #{onSale}, #{lastChange})
+        ON CONFLICT (deal_id) DO UPDATE SET
+            game_id      = EXCLUDED.game_id,
+            store_id     = EXCLUDED.store_id,
+            sale_price   = EXCLUDED.sale_price,
+            normal_price = EXCLUDED.normal_price,
+            savings      = EXCLUDED.savings,
+            currency     = EXCLUDED.currency,
+            is_on_sale   = EXCLUDED.is_on_sale,
+            last_change  = EXCLUDED.last_change
+    </insert>
+
+    <!-- ============ 서빙(읽기) ============ -->
+
+    <!-- 공통 필터 (deals 기준) -->
+    <sql id="dealFilters">
+        <if test="storeId != null and storeId != ''">AND d.store_id = #{storeId}</if>
+        <if test="minPrice != null">AND d.sale_price &gt;= #{minPrice}</if>
+        <if test="maxPrice != null">AND d.sale_price &lt;= #{maxPrice}</if>
+    </sql>
+
+    <select id="findDeals" resultType="com.example.deal.dto.DealResponse">
+        SELECT d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
+               d.sale_price, d.normal_price, d.savings, d.currency, g.thumb_url
+        FROM deals d
+        JOIN games  g ON g.game_id  = d.game_id
+        JOIN stores s ON s.store_id = d.store_id
+        <where>
+            <include refid="dealFilters"/>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sort == 'price'">d.sale_price ASC, d.deal_id</when>
+            <otherwise>d.savings DESC, d.deal_id</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countDealsFiltered" resultType="long">
+        SELECT COUNT(*) FROM deals d
+        <where>
+            <include refid="dealFilters"/>
+        </where>
+    </select>
+
+    <select id="findActiveStores" resultType="com.example.deal.dto.StoreDto">
+        SELECT store_id, store_name, icon_url
+        FROM stores
+        WHERE is_active = TRUE
+        ORDER BY store_id::int
+    </select>
+
+    <!-- ============ 검증/집계 ============ -->
+    <select id="countDeals"  resultType="long">SELECT COUNT(*) FROM deals</select>
+    <select id="countGames"  resultType="long">SELECT COUNT(*) FROM games</select>
+    <select id="countStores" resultType="long">SELECT COUNT(*) FROM stores</select>
 </mapper>
