@@ -23,8 +23,9 @@ cheapshark:
     enabled: true
     initial-delay-ms: 5000      # 앱 기동 5초 후 1차 수집
     fixed-delay-ms: 21600000    # 수집 주기(ms). 기본 6시간. (8h=28800000 / 12h=43200000)
+    sort-list: Deal Rating,Savings  # 정렬별 수집(추천순+할인율순) → 인기 게임 + 초고할인 모두 확보
     page-size: 60               # /deals 페이지당 최대 60
-    max-pages: 5                # 1회 수집 시 최대 페이지 수 (MVP, 5=약 300딜)
+    max-pages: 8                # 정렬당 페이지 수 (2정렬 × 8 × 60, 중복은 UPSERT 병합)
 
 server:
   port: 8080

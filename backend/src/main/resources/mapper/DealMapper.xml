@@ -31,15 +31,16 @@
     <!-- updated_at: INSERT 시 DEFAULT, UPDATE 시 트리거로 자동 갱신 -->
     <insert id="upsertDeal">
         INSERT INTO deals (deal_id, game_id, store_id, sale_price, normal_price,
-                           savings, currency, is_on_sale, last_change)
+                           savings, deal_rating, currency, is_on_sale, last_change)
         VALUES (#{dealId}, #{gameId}, #{storeId}, #{salePrice}, #{normalPrice},
-                #{savings}, #{currency}, #{onSale}, #{lastChange})
+                #{savings}, #{dealRating}, #{currency}, #{onSale}, #{lastChange})
         ON CONFLICT (deal_id) DO UPDATE SET
             game_id      = EXCLUDED.game_id,
             store_id     = EXCLUDED.store_id,
             sale_price   = EXCLUDED.sale_price,
             normal_price = EXCLUDED.normal_price,
             savings      = EXCLUDED.savings,
+            deal_rating  = EXCLUDED.deal_rating,
             currency     = EXCLUDED.currency,
             is_on_sale   = EXCLUDED.is_on_sale,
             last_change  = EXCLUDED.last_change
@@ -66,7 +67,8 @@
         ORDER BY
         <choose>
             <when test="sort == 'price'">d.sale_price ASC, d.deal_id</when>
-            <otherwise>d.savings DESC, d.deal_id</otherwise>
+            <when test="sort == 'savings'">d.savings DESC, d.deal_id</when>
+            <otherwise>d.deal_rating DESC NULLS LAST, d.savings DESC, d.deal_id</otherwise>
         </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>

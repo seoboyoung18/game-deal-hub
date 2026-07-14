@@ -21,6 +21,7 @@ public class CheapSharkDeal {
     private String salePrice;           // "7.49"
     private String normalPrice;         // "19.99"
     private String savings;             // "62.531266" (6자리 소수)
+    private String dealRating;          // "10.0" 등 (CheapShark 품질·가성비 점수)
     private String isOnSale;            // "1" / "0"
 
     private String metacriticScore;     // "0" 등

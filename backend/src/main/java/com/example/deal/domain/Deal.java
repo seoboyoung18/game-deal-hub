@@ -25,6 +25,7 @@ public class Deal {
     private BigDecimal salePrice;
     private BigDecimal normalPrice;
     private BigDecimal savings;      // 할인율 %, 예: 62.53
+    private BigDecimal dealRating;   // CheapShark dealRating(품질·가성비 점수, 추천순 정렬용)
     private String currency;         // 지금은 전부 'USD'
     private Boolean onSale;          // is_on_sale
     private LocalDateTime lastChange;

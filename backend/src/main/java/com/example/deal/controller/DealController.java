@@ -28,7 +28,7 @@ public class DealController {
     /** 할인 목록 (정렬 savings/price · 스토어/가격 필터 · 페이징). */
     @GetMapping("/deals")
     public PageResponse<DealResponse> getDeals(
-            @RequestParam(defaultValue = "savings") String sort,
+            @RequestParam(defaultValue = "rating") String sort,
             @RequestParam(required = false) String storeId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,

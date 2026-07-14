@@ -18,6 +18,6 @@ public interface StoreFetcher {
     /** 스토어 목록 원본. */
     List<CheapSharkStore> fetchStores();
 
-    /** 할인 목록 원본(페이지 단위, 0-base). */
-    List<CheapSharkDeal> fetchDeals(int pageNumber, int pageSize);
+    /** 할인 목록 원본(페이지 단위, 0-base). sortBy 는 CheapShark 정렬(예: "Deal Rating", "Savings"). */
+    List<CheapSharkDeal> fetchDeals(int pageNumber, int pageSize, String sortBy);
 }

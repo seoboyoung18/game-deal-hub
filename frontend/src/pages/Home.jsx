@@ -14,7 +14,7 @@ const SIZE = 20
 export default function Home() {
   const [stores, setStores] = useState([])
   const [deals, setDeals] = useState([])
-  const [sort, setSort] = useState('savings')
+  const [sort, setSort] = useState('rating')
   const [storeId, setStoreId] = useState('')
   const [price, setPrice] = useState({ min: '', max: '' })
   const [page, setPage] = useState(0)

@@ -55,16 +55,16 @@ public class CheapSharkFetcher implements StoreFetcher {
     }
 
     @Override
-    public List<CheapSharkDeal> fetchDeals(int pageNumber, int pageSize) {
+    public List<CheapSharkDeal> fetchDeals(int pageNumber, int pageSize, String sortBy) {
         List<CheapSharkDeal> deals = restClient.get()
                 .uri(uri -> uri.path("/deals")
                         .queryParam("pageNumber", pageNumber)
                         .queryParam("pageSize", pageSize)
-                        .queryParam("sortBy", "Savings")
+                        .queryParam("sortBy", sortBy)
                         .build())
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<CheapSharkDeal>>() {});
-        log.debug("[CheapShark] /deals page={} {}건 수신", pageNumber, deals == null ? 0 : deals.size());
+        log.debug("[CheapShark] /deals sort='{}' page={} {}건 수신", sortBy, pageNumber, deals == null ? 0 : deals.size());
         return deals == null ? List.of() : deals;
     }
 }

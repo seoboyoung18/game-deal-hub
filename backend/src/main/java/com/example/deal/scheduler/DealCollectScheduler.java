@@ -34,7 +34,7 @@ public class DealCollectScheduler {
         try {
             log.info("[스케줄러] 수집 시작");
             DealService.CollectResult r = dealService.collectOnce();
-            log.info("[스케줄러] 수집 성공 — 스토어 {} · 딜 {} · {}ms", r.stores(), r.deals(), r.elapsedMs());
+            log.info("[스케줄러] 수집 성공 — 스토어 {} · 저장 딜 {} · {}ms", r.stores(), r.totalDeals(), r.elapsedMs());
         } catch (Exception e) {
             log.error("[스케줄러] 수집 실패 — 다음 주기에 재시도합니다: {}", e.getMessage(), e);
         }

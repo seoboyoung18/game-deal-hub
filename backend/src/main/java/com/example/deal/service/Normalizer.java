@@ -56,6 +56,7 @@ public class Normalizer {
                 .salePrice(toMoney(d.getSalePrice()))
                 .normalPrice(toMoney(d.getNormalPrice()))
                 .savings(toPercent(d.getSavings()))
+                .dealRating(toRating(d.getDealRating()))
                 .currency("USD")
                 .onSale("1".equals(d.getIsOnSale()))
                 .lastChange(epochToLdt(d.getLastChange()))
@@ -76,6 +77,14 @@ public class Normalizer {
             return null;
         }
         return new BigDecimal(s.trim()).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /** "10.0" → 10.0 (NUMERIC(4,1)). CheapShark 추천 점수. */
+    private BigDecimal toRating(String s) {
+        if (!StringUtils.hasText(s)) {
+            return null;
+        }
+        return new BigDecimal(s.trim()).setScale(1, RoundingMode.HALF_UP);
     }
 
     private Integer toIntOrNull(String s) {
