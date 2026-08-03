@@ -164,6 +164,49 @@
   background-position: right 12px center;
 }
 
+/* ================= Currency toggle ================= */
+.currency-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  padding: 3px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+}
+.currency-toggle__btn {
+  height: 100%;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: background 0.12s, color 0.12s;
+}
+.currency-toggle__btn:hover {
+  color: var(--brand);
+}
+.currency-toggle__btn.is-active,
+.currency-toggle__btn.is-active:hover {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* KRW 안내 문구 */
+.home__krw-note {
+  margin: -8px 0 16px;
+  font-size: 13px;
+  color: var(--text-3);
+  background: var(--bg-2);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+}
+.home__krw-note strong {
+  color: var(--tier-amber);
+  font-weight: 700;
+}
+
 /* ================= Price filter ================= */
 .price-filter {
   display: inline-flex;

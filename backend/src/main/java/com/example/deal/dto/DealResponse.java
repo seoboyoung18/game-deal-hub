@@ -20,5 +20,7 @@ public class DealResponse {
     private BigDecimal normalPrice;
     private BigDecimal savings;
     private String currency;
+    private BigDecimal krwSalePrice;   // 스팀 실제 원화(있으면 프론트가 우선 사용)
+    private BigDecimal krwNormalPrice;
     private String thumbUrl;
 }

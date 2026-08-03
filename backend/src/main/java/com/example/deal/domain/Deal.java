@@ -27,6 +27,8 @@ public class Deal {
     private BigDecimal savings;      // 할인율 %, 예: 62.53
     private BigDecimal dealRating;   // CheapShark dealRating(품질·가성비 점수, 추천순 정렬용)
     private String currency;         // 지금은 전부 'USD'
+    private BigDecimal krwSalePrice;   // 스팀 실제 원화 할인가(스팀 딜만, 그 외 null)
+    private BigDecimal krwNormalPrice; // 스팀 실제 원화 정가
     private Boolean onSale;          // is_on_sale
     private LocalDateTime lastChange;
     private LocalDateTime updatedAt;

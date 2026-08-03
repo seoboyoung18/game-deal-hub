@@ -2,12 +2,15 @@ import { Link } from 'react-router-dom'
 import StoreBadge from './StoreBadge.jsx'
 import DiscountBadge from './DiscountBadge.jsx'
 import { tier } from '../lib/tier.js'
-import { formatPrice } from '../lib/format.js'
+import { displayPrice } from '../lib/format.js'
 
 // S1 그리드 카드: 커버(16:9) · 게임명 · 스토어 · ~~정가~~ · 할인가(티어색) · 할인율 뱃지
-export default function DealCard({ deal }) {
+// currency/rate 로 표시 통화 전환. deal.krwSalePrice 가 있으면(스팀 실가) 그 값을 우선.
+export default function DealCard({ deal, currency = 'USD', rate = null }) {
   const t = tier(deal.savings)
   const free = Number(deal.salePrice) === 0
+  const saleOpts = { currency, rate, krw: deal.krwSalePrice }
+  const normalOpts = { currency, rate, krw: deal.krwNormalPrice }
 
   return (
     <Link to={`/game/${deal.gameId}`} className="deal-card">
@@ -27,10 +30,10 @@ export default function DealCard({ deal }) {
         <StoreBadge storeName={deal.storeName} />
         <div className="deal-card__prices">
           {!free && (
-            <span className="deal-card__normal">{formatPrice(deal.normalPrice, deal.currency)}</span>
+            <span className="deal-card__normal">{displayPrice(deal.normalPrice, normalOpts)}</span>
           )}
           <span className="deal-card__sale" style={{ color: t.color }}>
-            {free ? '무료' : formatPrice(deal.salePrice, deal.currency)}
+            {free ? '무료' : displayPrice(deal.salePrice, saleOpts)}
           </span>
         </div>
       </div>

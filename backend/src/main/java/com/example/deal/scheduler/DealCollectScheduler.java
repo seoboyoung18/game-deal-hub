@@ -35,6 +35,9 @@ public class DealCollectScheduler {
             log.info("[스케줄러] 수집 시작");
             DealService.CollectResult r = dealService.collectOnce();
             log.info("[스케줄러] 수집 성공 — 스토어 {} · 저장 딜 {} · {}ms", r.stores(), r.totalDeals(), r.elapsedMs());
+            // 스팀 실제 원화 보강 (별도 단계, 실패해도 수집 결과엔 영향 없음)
+            int krw = dealService.enrichSteamKrw();
+            log.info("[스케줄러] 스팀 KRW 보강 {}건", krw);
         } catch (Exception e) {
             log.error("[스케줄러] 수집 실패 — 다음 주기에 재시도합니다: {}", e.getMessage(), e);
         }

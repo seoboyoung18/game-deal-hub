@@ -3,6 +3,7 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import StoreFilterChips from '../components/StoreFilterChips.jsx'
 import SortDropdown from '../components/SortDropdown.jsx'
+import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import PriceRangeFilter from '../components/PriceRangeFilter.jsx'
 import DealCard from '../components/DealCard.jsx'
 import Pagination from '../components/Pagination.jsx'
@@ -17,6 +18,8 @@ export default function Home() {
   const [sort, setSort] = useState('rating')
   const [storeId, setStoreId] = useState('')
   const [price, setPrice] = useState({ min: '', max: '' })
+  const [currency, setCurrency] = useState('USD')
+  const [rate, setRate] = useState(null)
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [total, setTotal] = useState(0)
@@ -25,6 +28,7 @@ export default function Home() {
 
   useEffect(() => {
     api.getStores().then(setStores).catch(() => {})
+    api.getExchangeRate().then((r) => setRate(r.rate)).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -66,6 +70,7 @@ export default function Home() {
         <div className="home__toolbar">
           <StoreFilterChips stores={stores} value={storeId} onChange={onStore} />
           <div className="home__controls">
+            <CurrencyToggle value={currency} onChange={setCurrency} />
             <PriceRangeFilter value={price} onChange={onPrice} />
             <SortDropdown value={sort} onChange={onSort} />
           </div>
@@ -74,6 +79,11 @@ export default function Home() {
         {!loading && !error && (
           <p className="home__count">
             <strong>{total.toLocaleString()}</strong>개의 할인
+          </p>
+        )}
+        {currency === 'KRW' && (
+          <p className="home__krw-note">
+            ₩ <strong>스팀</strong>은 실제 원화, 그 외 상점은 환율{rate ? ` ₩${Math.round(rate).toLocaleString('ko-KR')}` : ''} 기준 <strong>대략 환산(~ 표시)</strong>이에요 · 실제 결제가와 다를 수 있어요
           </p>
         )}
 
@@ -86,7 +96,7 @@ export default function Home() {
         {!loading && !error && deals.length > 0 && (
           <section className="deal-grid">
             {deals.map((d) => (
-              <DealCard key={d.dealId} deal={d} />
+              <DealCard key={d.dealId} deal={d} currency={currency} rate={rate} />
             ))}
           </section>
         )}

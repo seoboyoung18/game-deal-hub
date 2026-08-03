@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.deal.domain.Deal;
+import com.example.deal.dto.SteamDealRef;
+import com.example.deal.fetcher.SteamPriceFetcher;
 import com.example.deal.fetcher.StoreFetcher;
 import com.example.deal.fetcher.dto.CheapSharkDeal;
 import com.example.deal.fetcher.dto.CheapSharkStore;
+import com.example.deal.fetcher.dto.SteamPrice;
 import com.example.deal.repository.DealMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -19,18 +22,18 @@ import lombok.extern.slf4j.Slf4j;
  * 수집 오케스트레이션: fetch(raw) → normalize → upsert.
  * 저장 순서 store → game → deal (FK).
  * 여러 정렬(sort-list)로 수집해 인기 게임(Deal Rating)과 초고할인(Savings)을 함께 확보.
- * 중복 딜은 UPSERT 로 병합된다.
+ * 이후 스팀 딜은 cc=kr 실제 원화로 보강(enrichSteamKrw).
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DealService {
 
-    private final StoreFetcher fetcher;   // 현재 구현: CheapSharkFetcher
+    private final StoreFetcher fetcher;              // CheapSharkFetcher
+    private final SteamPriceFetcher steamPriceFetcher;
     private final Normalizer normalizer;
     private final DealMapper dealMapper;
 
-    /** 수집에 사용할 CheapShark 정렬들. 정렬마다 상위 몇 페이지씩 긁어 다양성을 확보. */
     @Value("${cheapshark.collect.sort-list:Deal Rating,Savings}")
     private String[] sortList;
 
@@ -40,19 +43,26 @@ public class DealService {
     @Value("${cheapshark.collect.page-size:60}")
     private int pageSize;
 
-    /** 1회 수집. */
+    @Value("${steam.krw.enabled:true}")
+    private boolean steamKrwEnabled;
+
+    @Value("${steam.krw.max:130}")
+    private int steamKrwMax;
+
+    @Value("${steam.krw.throttle-ms:500}")
+    private long steamKrwThrottleMs;
+
+    /** 1회 수집(CheapShark). */
     @Transactional
     public CollectResult collectOnce() {
         long start = System.currentTimeMillis();
 
-        // 1) 스토어 (deals 의 FK 대상 → 먼저 적재)
         List<CheapSharkStore> rawStores = fetcher.fetchStores();
         for (CheapSharkStore s : rawStores) {
             dealMapper.upsertStore(normalizer.toStore(s));
         }
         log.info("[수집] 스토어 {}건 upsert", rawStores.size());
 
-        // 2) 딜 — 정렬별 × 페이지별. 게임 upsert 후 딜 upsert.
         int fetched = 0;
         int skippedFree = 0;
         for (String sortByRaw : sortList) {
@@ -82,6 +92,33 @@ public class DealService {
         log.info("[수집] 완료 — 스토어 {}건 · 조회 {}건(중복 포함) · 정가0 제외 {}건 · 저장된 딜 총 {}건 · {}ms",
                 rawStores.size(), fetched, skippedFree, totalDeals, elapsed);
         return new CollectResult(rawStores.size(), fetched, totalDeals, elapsed);
+    }
+
+    /**
+     * 스팀 딜에 실제 한국 원화(cc=kr) 보강. 네트워크 호출이 많아 트랜잭션 없이
+     * 각 건 개별 갱신(autocommit) + rate limit 배려로 호출 간 throttle.
+     */
+    public int enrichSteamKrw() {
+        if (!steamKrwEnabled) {
+            return 0;
+        }
+        List<SteamDealRef> refs = dealMapper.findSteamDealsForKrw(steamKrwMax);
+        int updated = 0;
+        for (SteamDealRef ref : refs) {
+            SteamPrice p = steamPriceFetcher.fetchKrw(ref.getSteamAppId());
+            if (p != null) {
+                dealMapper.updateDealKrw(ref.getDealId(), p.krwSale(), p.krwNormal());
+                updated++;
+            }
+            try {
+                Thread.sleep(steamKrwThrottleMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        log.info("[스팀KRW] 대상 {}건 중 {}건 실가 갱신", refs.size(), updated);
+        return updated;
     }
 
     public record CollectResult(int stores, int fetched, long totalDeals, long elapsedMs) {}

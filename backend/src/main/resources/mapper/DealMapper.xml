@@ -28,7 +28,7 @@
             release_date     = EXCLUDED.release_date
     </insert>
 
-    <!-- updated_at: INSERT 시 DEFAULT, UPDATE 시 트리거로 자동 갱신 -->
+    <!-- updated_at: INSERT 시 DEFAULT, UPDATE 시 트리거로 자동 갱신. krw_* 는 스팀 보강 단계에서 채움 -->
     <insert id="upsertDeal">
         INSERT INTO deals (deal_id, game_id, store_id, sale_price, normal_price,
                            savings, deal_rating, currency, is_on_sale, last_change)
@@ -46,9 +46,24 @@
             last_change  = EXCLUDED.last_change
     </insert>
 
+    <!-- ============ 스팀 KRW 보강 ============ -->
+    <select id="findSteamDealsForKrw" resultType="com.example.deal.dto.SteamDealRef">
+        SELECT d.deal_id, g.steam_app_id
+        FROM deals d
+        JOIN games g ON g.game_id = d.game_id
+        WHERE d.store_id = '1' AND g.steam_app_id IS NOT NULL
+        ORDER BY d.deal_rating DESC NULLS LAST
+        LIMIT #{max}
+    </select>
+
+    <update id="updateDealKrw">
+        UPDATE deals
+        SET krw_sale_price = #{krwSale}, krw_normal_price = #{krwNormal}
+        WHERE deal_id = #{dealId}
+    </update>
+
     <!-- ============ 서빙(읽기) ============ -->
 
-    <!-- 공통 필터 (deals 기준) -->
     <sql id="dealFilters">
         <if test="storeId != null and storeId != ''">AND d.store_id = #{storeId}</if>
         <if test="minPrice != null">AND d.sale_price &gt;= #{minPrice}</if>
@@ -57,7 +72,8 @@
 
     <select id="findDeals" resultType="com.example.deal.dto.DealResponse">
         SELECT d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
-               d.sale_price, d.normal_price, d.savings, d.currency, g.thumb_url
+               d.sale_price, d.normal_price, d.savings, d.currency,
+               d.krw_sale_price, d.krw_normal_price, g.thumb_url
         FROM deals d
         JOIN games  g ON g.game_id  = d.game_id
         JOIN stores s ON s.store_id = d.store_id
