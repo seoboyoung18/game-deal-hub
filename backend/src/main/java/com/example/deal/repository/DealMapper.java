@@ -11,6 +11,7 @@ import com.example.deal.domain.Game;
 import com.example.deal.domain.Store;
 import com.example.deal.dto.DealResponse;
 import com.example.deal.dto.GameDetailResponse;
+import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.SteamDealRef;
 import com.example.deal.dto.StoreDto;
 import com.example.deal.dto.StorePriceRow;
@@ -54,6 +55,13 @@ public interface DealMapper {
     GameDetailResponse findGameMeta(@Param("gameId") String gameId);
 
     List<StorePriceRow> findGameDeals(@Param("gameId") String gameId);
+
+    // ---- 게임 검색 ----
+    List<GameSearchItem> searchGames(@Param("q") String q,
+                                     @Param("offset") int offset,
+                                     @Param("size") int size);
+
+    long countSearchGames(@Param("q") String q);
 
     // ---- 검증/집계 ----
     long countDeals();

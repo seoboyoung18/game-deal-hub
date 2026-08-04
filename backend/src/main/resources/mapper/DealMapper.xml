@@ -122,6 +122,29 @@
         ORDER BY d.sale_price ASC, d.deal_id
     </select>
 
+    <!-- ============ 게임 검색 (제목 부분일치, 게임 단위 최저가 요약) ============ -->
+    <select id="searchGames" resultType="com.example.deal.dto.GameSearchItem">
+        SELECT g.game_id, g.title, g.thumb_url,
+               MIN(d.sale_price)          AS min_sale_price,
+               'USD'                      AS currency,
+               COUNT(DISTINCT d.store_id) AS store_count,
+               string_agg(DISTINCT s.store_name, '|') AS store_names
+        FROM games g
+        JOIN deals  d ON d.game_id  = g.game_id
+        JOIN stores s ON s.store_id = d.store_id
+        WHERE g.title ILIKE '%' || #{q} || '%'
+        GROUP BY g.game_id, g.title, g.thumb_url
+        ORDER BY min_sale_price ASC, g.title
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="countSearchGames" resultType="long">
+        SELECT COUNT(DISTINCT g.game_id)
+        FROM games g
+        JOIN deals d ON d.game_id = g.game_id
+        WHERE g.title ILIKE '%' || #{q} || '%'
+    </select>
+
     <!-- ============ 검증/집계 ============ -->
     <select id="countDeals"  resultType="long">SELECT COUNT(*) FROM deals</select>
     <select id="countGames"  resultType="long">SELECT COUNT(*) FROM games</select>
