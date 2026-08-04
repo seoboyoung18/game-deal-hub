@@ -41,7 +41,9 @@ public class Normalizer {
                 .gameId(d.getGameID())
                 .title(d.getTitle())
                 .steamAppId(StringUtils.hasText(d.getSteamAppID()) ? d.getSteamAppID() : null)
-                .thumbUrl(d.getThumb())
+                .thumbUrl(StringUtils.hasText(d.getSteamAppID())
+                        ? "https://cdn.cloudflare.steamstatic.com/steam/apps/" + d.getSteamAppID().trim() + "/header.jpg"
+                        : d.getThumb())
                 .metacriticScore(toIntOrNull(d.getMetacriticScore()))
                 .steamRatingPct(toIntOrNull(d.getSteamRatingPercent()))
                 .releaseDate(epochToLdt(d.getReleaseDate()))
