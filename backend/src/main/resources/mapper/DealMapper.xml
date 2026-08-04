@@ -70,27 +70,35 @@
         <if test="maxPrice != null">AND d.sale_price &lt;= #{maxPrice}</if>
     </sql>
 
+    <!-- 게임당 한 장(최저가 딜)만 노출 — 홈 목록 중복 방지. DISTINCT ON 으로 game_id 별 최저가 선택 후 재정렬 -->
     <select id="findDeals" resultType="com.example.deal.dto.DealResponse">
-        SELECT d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
-               d.sale_price, d.normal_price, d.savings, d.currency,
-               d.krw_sale_price, d.krw_normal_price, g.thumb_url
-        FROM deals d
-        JOIN games  g ON g.game_id  = d.game_id
-        JOIN stores s ON s.store_id = d.store_id
-        <where>
-            <include refid="dealFilters"/>
-        </where>
+        SELECT t.deal_id, t.title, t.game_id, t.store_id, t.store_name,
+               t.sale_price, t.normal_price, t.savings, t.currency,
+               t.krw_sale_price, t.krw_normal_price, t.thumb_url
+        FROM (
+            SELECT DISTINCT ON (d.game_id)
+                   d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
+                   d.sale_price, d.normal_price, d.savings, d.currency,
+                   d.krw_sale_price, d.krw_normal_price, g.thumb_url, d.deal_rating
+            FROM deals d
+            JOIN games  g ON g.game_id  = d.game_id
+            JOIN stores s ON s.store_id = d.store_id
+            <where>
+                <include refid="dealFilters"/>
+            </where>
+            ORDER BY d.game_id, d.sale_price ASC, d.deal_id
+        ) t
         ORDER BY
         <choose>
-            <when test="sort == 'price'">d.sale_price ASC, d.deal_id</when>
-            <when test="sort == 'savings'">d.savings DESC, d.deal_id</when>
-            <otherwise>d.deal_rating DESC NULLS LAST, d.savings DESC, d.deal_id</otherwise>
+            <when test="sort == 'price'">t.sale_price ASC, t.deal_id</when>
+            <when test="sort == 'savings'">t.savings DESC, t.deal_id</when>
+            <otherwise>t.deal_rating DESC NULLS LAST, t.savings DESC, t.deal_id</otherwise>
         </choose>
         LIMIT #{size} OFFSET #{offset}
     </select>
 
     <select id="countDealsFiltered" resultType="long">
-        SELECT COUNT(*) FROM deals d
+        SELECT COUNT(DISTINCT d.game_id) FROM deals d
         <where>
             <include refid="dealFilters"/>
         </where>
