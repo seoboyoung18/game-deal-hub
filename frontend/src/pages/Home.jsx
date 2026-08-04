@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Header from '../components/Header.jsx'
+import Hero from '../components/Hero.jsx'
 import Footer from '../components/Footer.jsx'
 import StoreFilterChips from '../components/StoreFilterChips.jsx'
 import SortDropdown from '../components/SortDropdown.jsx'
@@ -66,7 +67,15 @@ export default function Home() {
   return (
     <>
       <Header />
+      <Hero />
       <main className="container home">
+        <div className="home__head">
+          <h2 className="section-title">🔥 지금 뜨는 할인</h2>
+          {!loading && !error && (
+            <span className="home__count"><strong>{total.toLocaleString()}</strong>개</span>
+          )}
+        </div>
+
         <div className="home__toolbar">
           <StoreFilterChips stores={stores} value={storeId} onChange={onStore} />
           <div className="home__controls">
@@ -76,11 +85,6 @@ export default function Home() {
           </div>
         </div>
 
-        {!loading && !error && (
-          <p className="home__count">
-            <strong>{total.toLocaleString()}</strong>개의 할인
-          </p>
-        )}
         {currency === 'KRW' && (
           <p className="home__krw-note">
             ₩ <strong>스팀</strong>은 실제 원화, 그 외 상점은 환율{rate ? ` ₩${Math.round(rate).toLocaleString('ko-KR')}` : ''} 기준 <strong>대략 환산(~ 표시)</strong>이에요 · 실제 결제가와 다를 수 있어요

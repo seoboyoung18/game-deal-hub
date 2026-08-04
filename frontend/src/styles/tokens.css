@@ -1,29 +1,31 @@
-/* 딜모아 디자인 시스템 토큰 (figma-design-brief.md 기준) */
+/* 딜모아 디자인 시스템 토큰 — 라벤더/보라 톤 (v2) */
 :root {
   /* 브랜드 / 포인트 */
   --brand: #7c5ce0;
+  --brand-2: #9b7bf0;
   --brand-hover: #5b3ec8;
+  --brand-soft: rgba(124, 92, 224, 0.1);
 
   /* 배경 / 카드 */
-  --bg: #f5f6f9;
-  --bg-2: #eaebef;
+  --bg: #f5f4fb;
+  --bg-2: #ececf4;
   --card: #ffffff;
-  --card-border: rgba(15, 17, 23, 0.08);
-  --header-bg: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(24, 20, 50, 0.07);
+  --header-bg: rgba(255, 255, 255, 0.72);
 
   /* 텍스트 */
-  --text-strong: #14161f;
-  --text-1: #4b5162;
-  --text-2: #6e7480;
-  --text-3: #8a8f9e;
-  --price-strike: #9aa0ae;
+  --text-strong: #171528;
+  --text-1: #4a4763;
+  --text-2: #6d6a83;
+  --text-3: #9a97ad;
+  --price-strike: #a8a6b8;
 
-  /* 할인율 티어 색 (핵심 규칙) */
-  --tier-green: #15803d; /* 10–30% 약함 */
-  --tier-amber: #b45309; /* 31–50% 중간 */
-  --tier-purple: #7c3aed; /* 51–80% 강함 */
-  --tier-red: #dc2626; /* 81–99% 매우강함 */
-  --tier-blue: #0284c7; /* 100% 무료 */
+  /* 할인율 티어 색 (핵심 규칙, 유지) */
+  --tier-green: #15803d;
+  --tier-amber: #b45309;
+  --tier-purple: #7c3aed;
+  --tier-red: #dc2626;
+  --tier-blue: #0284c7;
 
   /* 스토어 뱃지 색 */
   --store-steam: #66c0f4;
@@ -34,31 +36,34 @@
   --store-neutral: #b9becb;
 
   /* 형태 */
-  --radius: 14px;
-  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-sm: 11px;
   --radius-pill: 999px;
-  --shadow: 0 1px 2px rgba(15, 17, 23, 0.04), 0 6px 20px rgba(15, 17, 23, 0.06);
-  --shadow-hover: 0 2px 6px rgba(15, 17, 23, 0.06), 0 12px 32px rgba(15, 17, 23, 0.1);
+  --shadow: 0 1px 2px rgba(24, 20, 50, 0.04), 0 8px 24px rgba(24, 20, 50, 0.06);
+  --shadow-hover: 0 4px 10px rgba(24, 20, 50, 0.07), 0 18px 40px rgba(90, 62, 200, 0.16);
+  --hero-grad: linear-gradient(135deg, #efeafc 0%, #f4f0fe 42%, #eaf0fe 100%);
 
   /* 레이아웃 */
-  --maxw: 1280px;
+  --maxw: 1200px;
   --gap: 20px;
 }
 
-/* 다크 테마 (헤더 토글로 <html data-theme="dark">) */
+/* 다크 테마 */
 :root[data-theme='dark'] {
-  --bg: #0e0f13;
-  --bg-2: #191b22;
-  --card: #16181f;
-  --card-border: rgba(255, 255, 255, 0.09);
-  --header-bg: rgba(16, 18, 24, 0.85);
+  --bg: #0d0d14;
+  --bg-2: #181824;
+  --card: #15151f;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --header-bg: rgba(15, 15, 22, 0.72);
+  --brand-soft: rgba(124, 92, 224, 0.18);
 
-  --text-strong: #f3f4f7;
-  --text-1: #c3c7d2;
-  --text-2: #9298a6;
-  --text-3: #6d7382;
-  --price-strike: #6d7382;
+  --text-strong: #f2f1f8;
+  --text-1: #c6c4d6;
+  --text-2: #9995ac;
+  --text-3: #6f6c84;
+  --price-strike: #6f6c84;
 
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.5);
-  --shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.5), 0 18px 40px rgba(0, 0, 0, 0.62);
+  --hero-grad: linear-gradient(135deg, #17162a 0%, #141327 45%, #101426 100%);
 }
