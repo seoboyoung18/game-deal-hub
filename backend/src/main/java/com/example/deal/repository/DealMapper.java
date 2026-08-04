@@ -10,8 +10,10 @@ import com.example.deal.domain.Deal;
 import com.example.deal.domain.Game;
 import com.example.deal.domain.Store;
 import com.example.deal.dto.DealResponse;
+import com.example.deal.dto.GameDetailResponse;
 import com.example.deal.dto.SteamDealRef;
 import com.example.deal.dto.StoreDto;
+import com.example.deal.dto.StorePriceRow;
 
 /**
  * MyBatis 매퍼. SQL 은 resources/mapper/DealMapper.xml.
@@ -47,6 +49,11 @@ public interface DealMapper {
                             @Param("maxPrice") BigDecimal maxPrice);
 
     List<StoreDto> findActiveStores();
+
+    // ---- 게임 상세 ----
+    GameDetailResponse findGameMeta(@Param("gameId") String gameId);
+
+    List<StorePriceRow> findGameDeals(@Param("gameId") String gameId);
 
     // ---- 검증/집계 ----
     long countDeals();

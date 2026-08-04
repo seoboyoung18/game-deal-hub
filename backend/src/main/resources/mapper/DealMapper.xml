@@ -103,6 +103,25 @@
         ORDER BY store_id::int
     </select>
 
+    <!-- ============ 게임 상세 ============ -->
+    <select id="findGameMeta" resultType="com.example.deal.dto.GameDetailResponse">
+        SELECT game_id, title, steam_app_id, thumb_url,
+               metacritic_score, steam_rating_pct, release_date
+        FROM games
+        WHERE game_id = #{gameId}
+    </select>
+
+    <!-- 스토어별 가격 (싼 순). best 는 서비스에서 첫 행에 표시 -->
+    <select id="findGameDeals" resultType="com.example.deal.dto.StorePriceRow">
+        SELECT d.deal_id, d.store_id, s.store_name,
+               d.sale_price, d.normal_price, d.savings, d.currency,
+               d.krw_sale_price, d.krw_normal_price
+        FROM deals d
+        JOIN stores s ON s.store_id = d.store_id
+        WHERE d.game_id = #{gameId}
+        ORDER BY d.sale_price ASC, d.deal_id
+    </select>
+
     <!-- ============ 검증/집계 ============ -->
     <select id="countDeals"  resultType="long">SELECT COUNT(*) FROM deals</select>
     <select id="countGames"  resultType="long">SELECT COUNT(*) FROM games</select>

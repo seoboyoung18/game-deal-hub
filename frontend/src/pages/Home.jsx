@@ -8,6 +8,7 @@ import PriceRangeFilter from '../components/PriceRangeFilter.jsx'
 import DealCard from '../components/DealCard.jsx'
 import Pagination from '../components/Pagination.jsx'
 import { api } from '../lib/api.js'
+import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 
 const SIZE = 20
 
@@ -18,8 +19,8 @@ export default function Home() {
   const [sort, setSort] = useState('rating')
   const [storeId, setStoreId] = useState('')
   const [price, setPrice] = useState({ min: '', max: '' })
-  const [currency, setCurrency] = useState('USD')
-  const [rate, setRate] = useState(null)
+  const [currency, setCurrency] = useCurrency()
+  const rate = useExchangeRate()
   const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [total, setTotal] = useState(0)
@@ -28,7 +29,6 @@ export default function Home() {
 
   useEffect(() => {
     api.getStores().then(setStores).catch(() => {})
-    api.getExchangeRate().then((r) => setRate(r.rate)).catch(() => {})
   }, [])
 
   useEffect(() => {
