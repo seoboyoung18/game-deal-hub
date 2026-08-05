@@ -262,8 +262,9 @@
   text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
 }
 .state__hint {
-  color: var(--text-1);
-  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+  color: var(--text-strong);
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 16px rgba(255, 255, 255, 0.9);
 }
 .site-footer__note {
   color: var(--text-1);
