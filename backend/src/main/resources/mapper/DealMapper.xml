@@ -62,10 +62,39 @@
         WHERE deal_id = #{dealId}
     </update>
 
+    <!-- ============ 스팀 메타(장르·한국어 소개) 보강 ============ -->
+    <!-- 인기(딜 레이팅 최고치) 순으로 미보강 게임부터 — 화면에 자주 보이는 게임이 먼저 장르를 갖도록 -->
+    <select id="findGamesForMeta" resultType="com.example.deal.dto.GameMetaRef">
+        SELECT g.game_id, g.steam_app_id
+        FROM games g
+        WHERE g.steam_app_id IS NOT NULL AND g.meta_fetched_at IS NULL
+        ORDER BY (SELECT MAX(d.deal_rating) FROM deals d WHERE d.game_id = g.game_id) DESC NULLS LAST
+        LIMIT #{max}
+    </select>
+
+    <update id="updateGameMeta">
+        UPDATE games
+        SET genres = #{genres}, short_desc_ko = #{shortDescKo}, meta_fetched_at = CURRENT_TIMESTAMP
+        WHERE game_id = #{gameId}
+    </update>
+
+    <!-- 장르 목록 (빈도 높은 순) — 필터 칩 구성용 -->
+    <select id="findGenres" resultType="string">
+        SELECT t.genre
+        FROM (
+            SELECT trim(x) AS genre, COUNT(*) AS cnt
+            FROM games g, unnest(string_to_array(g.genres, '|')) AS x
+            WHERE g.genres IS NOT NULL AND trim(x) &lt;&gt; ''
+            GROUP BY trim(x)
+        ) t
+        ORDER BY t.cnt DESC, t.genre
+    </select>
+
     <!-- ============ 서빙(읽기) ============ -->
 
     <sql id="dealFilters">
         <if test="storeId != null and storeId != ''">AND d.store_id = #{storeId}</if>
+        <if test="genre != null and genre != ''">AND ('|' || g.genres || '|') LIKE ('%|' || #{genre} || '|%')</if>
         <if test="minPrice != null">AND d.sale_price &gt;= #{minPrice}</if>
         <if test="maxPrice != null">AND d.sale_price &lt;= #{maxPrice}</if>
     </sql>
@@ -74,12 +103,12 @@
     <select id="findDeals" resultType="com.example.deal.dto.DealResponse">
         SELECT t.deal_id, t.title, t.game_id, t.store_id, t.store_name,
                t.sale_price, t.normal_price, t.savings, t.currency,
-               t.krw_sale_price, t.krw_normal_price, t.thumb_url
+               t.krw_sale_price, t.krw_normal_price, t.thumb_url, t.genres
         FROM (
             SELECT DISTINCT ON (regexp_replace(lower(btrim(g.title)), '\s*[:-]*\s*((digital )?deluxe|ultimate|gold|complete|definitive|legendary|goty|game of the year|collectors?|premium|enhanced|anniversary|remastered|standard)( edition)?\s*$', ''))
                    d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
                    d.sale_price, d.normal_price, d.savings, d.currency,
-                   d.krw_sale_price, d.krw_normal_price, g.thumb_url, d.deal_rating
+                   d.krw_sale_price, d.krw_normal_price, g.thumb_url, g.genres, d.deal_rating
             FROM deals d
             JOIN games  g ON g.game_id  = d.game_id
             JOIN stores s ON s.store_id = d.store_id
@@ -116,7 +145,8 @@
     <!-- ============ 게임 상세 ============ -->
     <select id="findGameMeta" resultType="com.example.deal.dto.GameDetailResponse">
         SELECT game_id, title, steam_app_id, thumb_url,
-               metacritic_score, steam_rating_pct, release_date
+               metacritic_score, steam_rating_pct, release_date,
+               genres, short_desc_ko
         FROM games
         WHERE game_id = #{gameId}
     </select>

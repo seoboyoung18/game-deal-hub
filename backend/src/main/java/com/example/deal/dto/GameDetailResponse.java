@@ -16,5 +16,7 @@ public class GameDetailResponse {
     private Integer metacriticScore;
     private Integer steamRatingPct;
     private LocalDateTime releaseDate;
+    private String genres;             // 한국어 장르 '|' 구분 (스팀 메타 보강)
+    private String shortDescKo;        // 한국어 짧은 소개문
     private List<StorePriceRow> deals;
 }

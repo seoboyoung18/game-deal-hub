@@ -33,6 +33,12 @@ steam:
     enabled: true
     max: 130            # 1회 보강할 스팀 딜 수(추천순 상위)
     throttle-ms: 500    # 스팀 rate limit 배려용 호출 간격
+  # 스팀 메타(장르·한국어 소개) 보강 — 게임당 1회(meta_fetched_at 마킹)
+  # appdetails 는 ~200회/5분 제한: KRW(130×0.5s)와 같은 사이클에 돌아서 여유 있게 1.5s 간격
+  meta:
+    enabled: true
+    max: 100            # 사이클당 보강할 게임 수
+    throttle-ms: 1500
 
 # 환율(대략 환산용) — open.er-api.com (키 불필요)
 exchange:

@@ -11,6 +11,7 @@ import com.example.deal.domain.Game;
 import com.example.deal.domain.Store;
 import com.example.deal.dto.DealResponse;
 import com.example.deal.dto.GameDetailResponse;
+import com.example.deal.dto.GameMetaRef;
 import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.SteamDealRef;
 import com.example.deal.dto.StoreDto;
@@ -37,15 +38,26 @@ public interface DealMapper {
                        @Param("krwSale") BigDecimal krwSale,
                        @Param("krwNormal") BigDecimal krwNormal);
 
+    // ---- 스팀 메타(장르·한국어 소개) 보강 ----
+    List<GameMetaRef> findGamesForMeta(@Param("max") int max);
+
+    void updateGameMeta(@Param("gameId") String gameId,
+                        @Param("genres") String genres,
+                        @Param("shortDescKo") String shortDescKo);
+
+    List<String> findGenres();
+
     // ---- 서빙(읽기) ----
     List<DealResponse> findDeals(@Param("sort") String sort,
                                  @Param("storeId") String storeId,
+                                 @Param("genre") String genre,
                                  @Param("minPrice") BigDecimal minPrice,
                                  @Param("maxPrice") BigDecimal maxPrice,
                                  @Param("offset") int offset,
                                  @Param("size") int size);
 
     long countDealsFiltered(@Param("storeId") String storeId,
+                            @Param("genre") String genre,
                             @Param("minPrice") BigDecimal minPrice,
                             @Param("maxPrice") BigDecimal maxPrice);
 

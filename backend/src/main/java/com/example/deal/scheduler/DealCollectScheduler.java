@@ -38,6 +38,9 @@ public class DealCollectScheduler {
             // 스팀 실제 원화 보강 (별도 단계, 실패해도 수집 결과엔 영향 없음)
             int krw = dealService.enrichSteamKrw();
             log.info("[스케줄러] 스팀 KRW 보강 {}건", krw);
+            // 스팀 메타(장르·한국어 소개) 보강 — 게임당 1회, 사이클마다 미보강분 소진
+            int meta = dealService.enrichSteamMeta();
+            log.info("[스케줄러] 스팀 메타 보강 {}건", meta);
         } catch (Exception e) {
             log.error("[스케줄러] 수집 실패 — 다음 주기에 재시도합니다: {}", e.getMessage(), e);
         }

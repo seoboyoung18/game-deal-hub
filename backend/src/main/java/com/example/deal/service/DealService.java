@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.deal.domain.Deal;
+import com.example.deal.dto.GameMetaRef;
 import com.example.deal.dto.SteamDealRef;
+import com.example.deal.fetcher.SteamMetaFetcher;
 import com.example.deal.fetcher.SteamPriceFetcher;
 import com.example.deal.fetcher.StoreFetcher;
 import com.example.deal.fetcher.dto.CheapSharkDeal;
@@ -31,6 +33,7 @@ public class DealService {
 
     private final StoreFetcher fetcher;              // CheapSharkFetcher
     private final SteamPriceFetcher steamPriceFetcher;
+    private final SteamMetaFetcher steamMetaFetcher;
     private final Normalizer normalizer;
     private final DealMapper dealMapper;
 
@@ -51,6 +54,15 @@ public class DealService {
 
     @Value("${steam.krw.throttle-ms:500}")
     private long steamKrwThrottleMs;
+
+    @Value("${steam.meta.enabled:true}")
+    private boolean steamMetaEnabled;
+
+    @Value("${steam.meta.max:100}")
+    private int steamMetaMax;
+
+    @Value("${steam.meta.throttle-ms:1500}")
+    private long steamMetaThrottleMs;
 
     /** 1회 수집(CheapShark). */
     @Transactional
@@ -118,6 +130,36 @@ public class DealService {
             }
         }
         log.info("[스팀KRW] 대상 {}건 중 {}건 실가 갱신", refs.size(), updated);
+        return updated;
+    }
+
+    /**
+     * 스팀 메타(장르·한국어 소개) 보강. 게임당 1회 — meta_fetched_at 없는 게임만.
+     * appdetails 는 rate limit(~200회/5분)이 빡빡해 KRW 보강보다 긴 스로틀 사용.
+     * 일시 오류(null)는 마킹하지 않아 다음 사이클에 재시도, 내려간 앱(빈 메타)은 마킹해 종료.
+     */
+    public int enrichSteamMeta() {
+        if (!steamMetaEnabled) {
+            return 0;
+        }
+        List<GameMetaRef> refs = dealMapper.findGamesForMeta(steamMetaMax);
+        int updated = 0;
+        for (GameMetaRef ref : refs) {
+            SteamMetaFetcher.SteamMeta m = steamMetaFetcher.fetchMeta(ref.getSteamAppId());
+            if (m != null) {
+                dealMapper.updateGameMeta(ref.getGameId(), m.genres(), m.shortDescKo());
+                if (m.genres() != null) {
+                    updated++;
+                }
+            }
+            try {
+                Thread.sleep(steamMetaThrottleMs);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        log.info("[스팀메타] 대상 {}건 중 {}건 장르 확보", refs.size(), updated);
         return updated;
     }
 

@@ -25,11 +25,12 @@ public class DealController {
 
     private final DealMapper dealMapper;
 
-    /** 할인 목록 (정렬 savings/price · 스토어/가격 필터 · 페이징). */
+    /** 할인 목록 (정렬 savings/price · 스토어/장르/가격 필터 · 페이징). */
     @GetMapping("/deals")
     public PageResponse<DealResponse> getDeals(
             @RequestParam(defaultValue = "rating") String sort,
             @RequestParam(required = false) String storeId,
+            @RequestParam(required = false) String genre,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(defaultValue = "0") int page,
@@ -39,8 +40,8 @@ public class DealController {
         int s = Math.min(Math.max(size, 1), 100);
         int offset = p * s;
 
-        List<DealResponse> content = dealMapper.findDeals(sort, storeId, minPrice, maxPrice, offset, s);
-        long total = dealMapper.countDealsFiltered(storeId, minPrice, maxPrice);
+        List<DealResponse> content = dealMapper.findDeals(sort, storeId, genre, minPrice, maxPrice, offset, s);
+        long total = dealMapper.countDealsFiltered(storeId, genre, minPrice, maxPrice);
         return PageResponse.of(content, p, s, total);
     }
 
@@ -48,5 +49,11 @@ public class DealController {
     @GetMapping("/stores")
     public List<StoreDto> getStores() {
         return dealMapper.findActiveStores();
+    }
+
+    /** 장르 목록 (빈도순) — 스팀 메타 보강으로 쌓인 한국어 장르. */
+    @GetMapping("/genres")
+    public List<String> getGenres() {
+        return dealMapper.findGenres();
     }
 }
