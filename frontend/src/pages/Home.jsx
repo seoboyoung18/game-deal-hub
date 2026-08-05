@@ -22,18 +22,25 @@ export default function Home() {
   useEffect(() => {
     let alive = true
     Promise.all([
-      api.getDeals({ sort: 'rating', size: 12 }),
+      api.getDeals({ sort: 'rating', size: 40 }),
       api.getDeals({ sort: 'savings', size: 5 }),
     ])
       .then(([rated, cheapest]) => {
         if (!alive) return
-        const featured = rated.content[0] ?? null
+        // 오늘의 핫딜: 싼 게임이 아니라 "정가 높은 게임이 크게 할인 + 인기" —
+        // rating(인기) 순서를 유지한 채 정가·할인율 기준을 통과하는 첫 딜. 없으면 완화 후 첫 딜.
+        const list = rated.content
+        const featured =
+          list.find((d) => Number(d.normalPrice) >= 30 && Number(d.savings) >= 60) ??
+          list.find((d) => Number(d.normalPrice) >= 20 && Number(d.savings) >= 50) ??
+          list[0] ??
+          null
         // 추천 특가: 핫딜·랭킹에 이미 보인 게임은 제외 (한 화면 안 반복 방지)
         const shown = new Set(
           [featured?.gameId, ...cheapest.content.map((d) => d.gameId)].filter(Boolean)
         )
         const picks = []
-        for (const d of rated.content.slice(1)) {
+        for (const d of list) {
           if (shown.has(d.gameId)) continue
           shown.add(d.gameId)
           picks.push(d)
