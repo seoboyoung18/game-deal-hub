@@ -140,7 +140,7 @@
 }
 .hero__visual {
   position: relative;
-  min-height: 420px;
+  min-height: 540px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -148,9 +148,9 @@
 .hero__char {
   position: relative;
   width: 100%;
-  max-width: 500px;
+  max-width: 620px;
   height: 100%;
-  min-height: 380px;
+  min-height: 500px;
   transform: translateY(22px);
 }
 .hero__char-img {
@@ -356,6 +356,9 @@
 
 /* ================= Section title ================= */
 .section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 22px;
   font-weight: 800;
   letter-spacing: -0.01em;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Flame } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import Hero from '../components/Hero.jsx'
 import Footer from '../components/Footer.jsx'
@@ -70,7 +71,9 @@ export default function Home() {
       <Hero />
       <main className="container home">
         <div className="home__head">
-          <h2 className="section-title">🔥 지금 뜨는 할인</h2>
+          <h2 className="section-title">
+            <Flame size={20} strokeWidth={2.4} style={{ color: '#ff7043' }} /> 지금 뜨는 할인
+          </h2>
           {!loading && !error && (
             <span className="home__count"><strong>{total.toLocaleString()}</strong>개</span>
           )}

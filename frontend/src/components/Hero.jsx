@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Flame, Search } from 'lucide-react'
 import HeroCharacter from './HeroCharacter.jsx'
 import { HAS_BG } from '../lib/siteBg.js'
 
@@ -18,7 +19,7 @@ export default function Hero() {
     <section className={`hero ${HAS_BG ? 'hero--overlay' : ''}`}>
       <div className="hero__inner container">
         <div className="hero__text">
-          <span className="hero__badge">🔥 여러 스토어 할인을 한 곳에</span>
+          <span className="hero__badge"><Flame size={15} strokeWidth={2.4} /> 여러 스토어 할인을 한 곳에</span>
           <h1 className="hero__title">
             모든 게임 할인을
             <br />
@@ -26,7 +27,7 @@ export default function Hero() {
           </h1>
 
           <form className="hero__search" onSubmit={submit} role="search">
-            <span className="hero__search-icon" aria-hidden>🔍</span>
+            <span className="hero__search-icon" aria-hidden><Search size={20} strokeWidth={2.2} /></span>
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
