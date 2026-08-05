@@ -245,6 +245,42 @@
   color: transparent;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
+
+/* 배경 위에 바로 얹히는 텍스트 가독성 (검색 제목·건수·빈상태·푸터·섹션) */
+.section-title,
+.home__count,
+.search__title,
+.search__count {
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
+}
+.search__count {
+  color: var(--text-1);
+}
+.state {
+  color: var(--text-strong);
+  font-weight: 500;
+  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
+}
+.state__hint {
+  color: var(--text-1);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+}
+.site-footer__note {
+  color: var(--text-1);
+  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
+}
+.site-footer__meta {
+  color: var(--text-2);
+}
+:root[data-theme='dark'] .section-title,
+:root[data-theme='dark'] .home__count,
+:root[data-theme='dark'] .search__title,
+:root[data-theme='dark'] .search__count,
+:root[data-theme='dark'] .state,
+:root[data-theme='dark'] .state__hint,
+:root[data-theme='dark'] .site-footer__note {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.65);
+}
 .hero__sub {
   margin: 16px 0 26px;
   font-size: 16px;
@@ -562,7 +598,11 @@
   font-weight: 800;
 }
 .search__title strong {
-  color: var(--brand);
+  background: linear-gradient(90deg, #ffd24a, #ffab2e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.28));
 }
 .search__count {
   color: var(--text-2);
