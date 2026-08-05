@@ -35,7 +35,7 @@ export default function GameDetail() {
 
   return (
     <>
-      <Header />
+      <Header showSearch />
       <main className="container detail">
         {loading && <div className="state">불러오는 중…</div>}
         {error && <div className="state state--error">게임 정보를 불러오지 못했어요 · {error}</div>}

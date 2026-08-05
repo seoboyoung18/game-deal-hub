@@ -1,22 +1,21 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import HeroCharacter from './HeroCharacter.jsx'
+import { HAS_BG } from '../lib/siteBg.js'
 
-const STORES = ['Steam', 'Epic Games', 'GOG', 'Humble', 'Fanatical']
-
-// 홈 히어로 배너 (2단): 좌 카피/검색, 우 회전 캐릭터
+// 홈 히어로 (2단). 배경은 SiteBackground(사이트 전체)에서 처리 → 배경 있으면 히어로는 투명 오버레이.
 export default function Hero() {
   const [q, setQ] = useState('')
   const navigate = useNavigate()
 
   const submit = (e) => {
     e.preventDefault()
-    const t = q.trim()
-    if (t) navigate(`/search?q=${encodeURIComponent(t)}`)
+    const term = q.trim()
+    if (term) navigate(`/search?q=${encodeURIComponent(term)}`)
   }
 
   return (
-    <section className="hero">
+    <section className={`hero ${HAS_BG ? 'hero--overlay' : ''}`}>
       <div className="hero__inner container">
         <div className="hero__text">
           <span className="hero__badge">🔥 여러 스토어 할인을 한 곳에</span>
@@ -25,9 +24,6 @@ export default function Hero() {
             <br />
             <span>한눈에</span> 비교하세요
           </h1>
-          <p className="hero__sub">
-            스팀·에픽·GOG 등 여러 상점의 가격을 모아, 지금 어디가 제일 싼지 바로 보여드려요.
-          </p>
 
           <form className="hero__search" onSubmit={submit} role="search">
             <span className="hero__search-icon" aria-hidden>🔍</span>
@@ -39,12 +35,6 @@ export default function Hero() {
             />
             <button type="submit">검색</button>
           </form>
-
-          <div className="hero__stores">
-            {STORES.map((s) => (
-              <span key={s} className="hero__store">{s}</span>
-            ))}
-          </div>
         </div>
 
         <div className="hero__visual">

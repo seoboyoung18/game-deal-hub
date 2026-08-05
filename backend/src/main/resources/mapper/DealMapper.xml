@@ -76,7 +76,7 @@
                t.sale_price, t.normal_price, t.savings, t.currency,
                t.krw_sale_price, t.krw_normal_price, t.thumb_url
         FROM (
-            SELECT DISTINCT ON (d.game_id)
+            SELECT DISTINCT ON (regexp_replace(lower(btrim(g.title)), '\s*[:-]*\s*((digital )?deluxe|ultimate|gold|complete|definitive|legendary|goty|game of the year|collectors?|premium|enhanced|anniversary|remastered|standard)( edition)?\s*$', ''))
                    d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
                    d.sale_price, d.normal_price, d.savings, d.currency,
                    d.krw_sale_price, d.krw_normal_price, g.thumb_url, d.deal_rating
@@ -86,7 +86,7 @@
             <where>
                 <include refid="dealFilters"/>
             </where>
-            ORDER BY d.game_id, d.sale_price ASC, d.deal_id
+            ORDER BY regexp_replace(lower(btrim(g.title)), '\s*[:-]*\s*((digital )?deluxe|ultimate|gold|complete|definitive|legendary|goty|game of the year|collectors?|premium|enhanced|anniversary|remastered|standard)( edition)?\s*$', ''), d.sale_price ASC, d.deal_id
         ) t
         ORDER BY
         <choose>
@@ -98,7 +98,9 @@
     </select>
 
     <select id="countDealsFiltered" resultType="long">
-        SELECT COUNT(DISTINCT d.game_id) FROM deals d
+        SELECT COUNT(DISTINCT regexp_replace(lower(btrim(g.title)), '\s*[:-]*\s*((digital )?deluxe|ultimate|gold|complete|definitive|legendary|goty|game of the year|collectors?|premium|enhanced|anniversary|remastered|standard)( edition)?\s*$', ''))
+        FROM deals d
+        JOIN games g ON g.game_id = d.game_id
         <where>
             <include refid="dealFilters"/>
         </where>

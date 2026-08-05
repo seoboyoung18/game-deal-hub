@@ -54,7 +54,7 @@ export default function SearchResults() {
 
   return (
     <>
-      <Header key={q} initialQuery={q} />
+      <Header key={q} initialQuery={q} showSearch />
       <main className="container search">
         <div className="search__head">
           <h1 className="search__title">

@@ -28,9 +28,107 @@
   bottom: -110px;
   left: -40px;
 }
+/* 배경 이미지 레이어 (src/assets/hero-bg.* 있으면 자동 표시) */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+}
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(245, 244, 251, 0.96) 0%,
+    rgba(245, 244, 251, 0.72) 42%,
+    rgba(245, 244, 251, 0.12) 100%
+  );
+}
+:root[data-theme='dark'] .hero__scrim {
+  background: linear-gradient(
+    90deg,
+    rgba(13, 13, 20, 0.95) 0%,
+    rgba(13, 13, 20, 0.72) 42%,
+    rgba(13, 13, 20, 0.18) 100%
+  );
+}
+/* 배경 이미지가 있으면 데코 블롭 숨김 */
+.hero--has-bg::before,
+.hero--has-bg::after {
+  display: none;
+}
+/* 밤 배경: 어두운 가림막 + 밝은 글자 (테마 무관 가독성) */
+.hero--night .hero__scrim {
+  background: linear-gradient(
+    90deg,
+    rgba(10, 10, 18, 0.9) 0%,
+    rgba(10, 10, 18, 0.62) 42%,
+    rgba(10, 10, 18, 0.14) 100%
+  );
+}
+.hero--night .hero__title {
+  color: #f4f2fc;
+}
+.hero--night .hero__sub {
+  color: rgba(255, 255, 255, 0.82);
+}
+.hero--night .hero__badge {
+  background: rgba(124, 92, 224, 0.32);
+  color: #ddd0fb;
+}
+.hero--night .hero__store {
+  color: #eae8f5;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ================= 사이트 전체 배경 ================= */
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.site-bg__img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+/* 아주 옅은 틴트만 (배경이 잘 보이게). 진하게/연하게는 opacity 값으로 조절 */
+.site-bg__tint {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  opacity: 0.12;
+}
+.site-bg--night .site-bg__tint {
+  background: #0a0a14;
+  opacity: 0.28;
+}
+
+/* 배경 위에서는 히어로를 투명 처리 (배경이 그대로 보이게) */
+.hero--overlay {
+  background: transparent;
+  border-bottom: none;
+}
+.hero--overlay::before,
+.hero--overlay::after {
+  display: none;
+}
+/* 배경 위 글자 가독성 (옅은 그림자) */
+.hero--overlay .hero__title {
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
+}
+.hero--overlay .hero__sub {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+}
 .hero__inner {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
   align-items: center;
@@ -42,7 +140,7 @@
 }
 .hero__visual {
   position: relative;
-  min-height: 360px;
+  min-height: 420px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -50,8 +148,10 @@
 .hero__char {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  aspect-ratio: 3 / 4;
+  max-width: 500px;
+  height: 100%;
+  min-height: 380px;
+  transform: translateY(22px);
 }
 .hero__char-img {
   position: absolute;
@@ -61,7 +161,8 @@
   object-fit: contain;
   opacity: 0;
   transition: opacity 1s ease;
-  animation: heroFloat 5s ease-in-out infinite;
+  transform-origin: bottom center;
+  animation: heroSway 9s ease-in-out infinite;
   filter: drop-shadow(0 20px 40px rgba(90, 62, 200, 0.28));
 }
 .hero__char-img.is-active {
@@ -70,6 +171,20 @@
 @keyframes heroFloat {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-16px); }
+}
+/* 캐릭터 살랑살랑: 좌우 갸우뚱 + 부드러운 부유 (정적 이미지에 적용) */
+@keyframes heroSway {
+  0%   { transform: translateY(0)     rotate(-1.5deg); }
+  25%  { transform: translateY(-7px)  rotate(0.6deg); }
+  50%  { transform: translateY(-11px) rotate(1.5deg); }
+  75%  { transform: translateY(-7px)  rotate(-0.6deg); }
+  100% { transform: translateY(0)     rotate(-1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__char-img,
+  .hero__char--empty span {
+    animation: none;
+  }
 }
 .hero__char--empty {
   display: flex;
@@ -107,13 +222,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--brand-soft);
-  color: var(--brand);
+  background: rgba(124, 92, 224, 0.92);
+  color: #fff;
   font-weight: 700;
   font-size: 13px;
-  padding: 7px 14px;
+  padding: 8px 15px;
   border-radius: var(--radius-pill);
   margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgba(90, 62, 200, 0.35);
 }
 .hero__title {
   font-size: 46px;
@@ -123,10 +239,11 @@
   color: var(--text-strong);
 }
 .hero__title span {
-  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+  background: linear-gradient(90deg, #ffd24a, #ffab2e);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
 .hero__sub {
   margin: 16px 0 26px;
