@@ -685,6 +685,22 @@
 .picks {
   margin-bottom: 44px;
 }
+.home__head--split {
+  justify-content: space-between;
+  align-items: center;
+}
+.more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brand);
+  transition: color 0.12s;
+}
+.more-link:hover {
+  color: var(--brand-hover);
+}
 
 /* 기능 소개 4칸 */
 .perks {

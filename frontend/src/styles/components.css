@@ -19,6 +19,32 @@
   flex: none;
   font-size: 24px;
 }
+.site-header__left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+}
+.site-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-link {
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: color 0.12s, background 0.12s;
+}
+.nav-link:hover {
+  color: var(--brand);
+}
+.nav-link.is-active {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
 
 /* Searchbar */
 .searchbar {
