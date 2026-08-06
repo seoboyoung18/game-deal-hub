@@ -858,6 +858,22 @@
   background: rgba(255, 255, 255, 0.94);
 }
 
+/* 카드 장르 태그 (스팀 메타 — 없으면 빈 줄 유지로 카드 리듬 맞춤) */
+.deal-card__tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  min-height: 21px;
+}
+.tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  background: var(--bg-2);
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+}
+
 /* 히어로 스토어 스트립: 아이콘 + 이름 */
 .hero__store {
   display: inline-flex;
@@ -951,6 +967,21 @@
 .meta-badge--steam {
   background: rgba(102, 192, 244, 0.18);
   color: #1565c0;
+}
+.meta-badge--genre {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.detail__desc {
+  margin-top: 14px;
+  max-width: 780px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-strong);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85), 0 2px 12px rgba(255, 255, 255, 0.6);
+}
+:root[data-theme='dark'] .detail__desc {
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
 }
 .detail__pricehead {
   display: flex;

@@ -45,6 +45,12 @@ export default function DealCard({ deal, currency = 'USD', rate = null }) {
 
       <div className="deal-card__body">
         <h3 className="deal-card__title" title={deal.title}>{deal.title}</h3>
+        <div className="deal-card__tags" aria-hidden={!deal.genres}>
+          {deal.genres &&
+            deal.genres.split('|').slice(0, 2).map((g) => (
+              <span key={g} className="tag">{g}</span>
+            ))}
+        </div>
         <StoreBadge storeName={deal.storeName} />
         <div className="deal-card__prices">
           {!free && (

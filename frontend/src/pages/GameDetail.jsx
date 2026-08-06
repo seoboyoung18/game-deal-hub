@@ -75,7 +75,12 @@ export default function GameDetail() {
                   <span className="meta-badge meta-badge--steam">스팀 {game.steamRatingPct}%</span>
                 ) : null}
                 {year && <span className="meta-badge">{year}</span>}
+                {game.genres &&
+                  game.genres.split('|').map((g) => (
+                    <span key={g} className="meta-badge meta-badge--genre">{g}</span>
+                  ))}
               </div>
+              {game.shortDescKo && <p className="detail__desc">{game.shortDescKo}</p>}
             </div>
 
             <div className="detail__pricehead">

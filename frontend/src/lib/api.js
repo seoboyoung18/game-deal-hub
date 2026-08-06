@@ -25,10 +25,12 @@ async function get(path, params) {
 }
 
 export const api = {
-  /** 할인 목록: { sort, storeId, minPrice, maxPrice, page, size } */
+  /** 할인 목록: { sort, storeId, genre, minPrice, maxPrice, page, size } */
   getDeals: (params) => get('/deals', params),
   /** 활성 스토어 목록 */
   getStores: () => get('/stores'),
+  /** 장르 목록 (빈도순, 한국어 — 스팀 메타) */
+  getGenres: () => get('/genres'),
   /** 게임 상세 + 스토어별 가격 비교 */
   getGame: (gameId) => get(`/games/${gameId}`),
   /** 게임 검색: { q, page, size } */

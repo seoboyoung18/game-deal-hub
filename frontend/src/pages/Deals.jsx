@@ -25,6 +25,8 @@ export default function Deals() {
   const [tab, setTab] = useState('all') // all | wish
   const [sort, setSort] = useState('rating')
   const [storeId, setStoreId] = useState('')
+  const [genres, setGenres] = useState([])
+  const [genre, setGenre] = useState('')
   const [price, setPrice] = useState({ min: '', max: '' })
   const [currency, setCurrency] = useCurrency()
   const rate = useExchangeRate()
@@ -37,6 +39,7 @@ export default function Deals() {
 
   useEffect(() => {
     api.getStores().then(setStores).catch(() => {})
+    api.getGenres().then(setGenres).catch(() => {})
     api
       .getDeals({ sort: 'rating', size: 5 })
       .then((res) => setTrend(res.content))
@@ -48,7 +51,7 @@ export default function Deals() {
     setLoading(true)
     setError(null)
     api
-      .getDeals({ sort, storeId, minPrice: price.min, maxPrice: price.max, page, size: SIZE })
+      .getDeals({ sort, storeId, genre, minPrice: price.min, maxPrice: price.max, page, size: SIZE })
       .then((res) => {
         if (!alive) return
         setDeals(res.content)
@@ -60,7 +63,7 @@ export default function Deals() {
     return () => {
       alive = false
     }
-  }, [sort, storeId, price.min, price.max, page])
+  }, [sort, storeId, genre, price.min, price.max, page])
 
   const onStore = (id) => {
     setStoreId(id)
@@ -72,6 +75,10 @@ export default function Deals() {
   }
   const onPrice = (p) => {
     setPrice(p)
+    setPage(0)
+  }
+  const onGenre = (g) => {
+    setGenre(g)
     setPage(0)
   }
 
@@ -117,6 +124,19 @@ export default function Deals() {
                   <StoreFilterChips stores={stores} value={storeId} onChange={onStore} />
                   <div className="home__controls">
                     <CurrencyToggle value={currency} onChange={setCurrency} />
+                    {genres.length > 0 && (
+                      <select
+                        className="sort-select"
+                        value={genre}
+                        onChange={(e) => onGenre(e.target.value)}
+                        aria-label="장르 필터"
+                      >
+                        <option value="">전체 장르</option>
+                        {genres.map((g) => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                    )}
                     <PriceRangeFilter value={price} onChange={onPrice} />
                     <SortDropdown value={sort} onChange={onSort} />
                   </div>
