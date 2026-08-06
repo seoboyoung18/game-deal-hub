@@ -4,6 +4,7 @@ import StoreBadge from './StoreBadge.jsx'
 import DiscountBadge from './DiscountBadge.jsx'
 import { tier } from '../lib/tier.js'
 import { displayPrice } from '../lib/format.js'
+import { hiResCard, fallbackTo } from '../lib/steamImg.js'
 
 // 홈 R2: 오늘의 핫딜 대형 피처 카드 (rating 1위 딜)
 export default function FeaturedDeal({ deal, currency = 'USD', rate = null }) {
@@ -14,7 +15,7 @@ export default function FeaturedDeal({ deal, currency = 'USD', rate = null }) {
     <Link to={`/game/${deal.gameId}`} className="featured">
       <div className="featured__cover">
         {deal.thumbUrl ? (
-          <img src={deal.thumbUrl} alt={deal.title} />
+          <img src={hiResCard(deal.thumbUrl)} onError={fallbackTo(deal.thumbUrl)} alt={deal.title} />
         ) : (
           <div className="featured__cover-empty" aria-hidden>🎮</div>
         )}

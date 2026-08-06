@@ -7,6 +7,7 @@ import StorePriceRow from '../components/StorePriceRow.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 import { recordRecent } from '../lib/recentGames.js'
+import { hiResHero, fallbackTo } from '../lib/steamImg.js'
 
 // S3 게임 상세 · 스토어별 가격 비교
 export default function GameDetail() {
@@ -62,7 +63,13 @@ export default function GameDetail() {
             </nav>
 
             <div className="detail__hero">
-              {game.thumbUrl && <img src={game.thumbUrl} alt={game.title} />}
+              {game.thumbUrl && (
+                <img
+                  src={hiResHero(game.thumbUrl)}
+                  onError={fallbackTo(game.thumbUrl)}
+                  alt={game.title}
+                />
+              )}
             </div>
 
             <div className="detail__head">

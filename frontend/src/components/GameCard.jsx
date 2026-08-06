@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { hiResCard, fallbackTo } from '../lib/steamImg.js'
 import StoreBadge from './StoreBadge.jsx'
 import { displayPrice } from '../lib/format.js'
 
@@ -10,7 +11,12 @@ export default function GameCard({ game, currency, rate }) {
     <Link to={`/game/${game.gameId}`} className="game-card">
       <div className="game-card__cover">
         {game.thumbUrl ? (
-          <img src={game.thumbUrl} alt={game.title} loading="lazy" />
+          <img
+            src={hiResCard(game.thumbUrl)}
+            onError={fallbackTo(game.thumbUrl)}
+            alt={game.title}
+            loading="lazy"
+          />
         ) : (
           <div className="game-card__cover-empty" aria-hidden>🎮</div>
         )}
