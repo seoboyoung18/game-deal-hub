@@ -6,6 +6,7 @@ import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import StorePriceRow from '../components/StorePriceRow.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
+import { recordRecent } from '../lib/recentGames.js'
 
 // S3 게임 상세 · 스토어별 가격 비교
 export default function GameDetail() {
@@ -22,7 +23,19 @@ export default function GameDetail() {
     setError(null)
     api
       .getGame(gameId)
-      .then((g) => alive && setGame(g))
+      .then((g) => {
+        if (!alive) return
+        setGame(g)
+        // 최근 본 게임 기록 (최저가는 첫 행 = sale_price ASC)
+        const low = g.deals?.[0]
+        recordRecent({
+          gameId: g.gameId,
+          title: g.title,
+          thumbUrl: g.thumbUrl,
+          salePrice: low?.salePrice ?? null,
+          krwSalePrice: low?.krwSalePrice ?? null,
+        })
+      })
       .catch((e) => alive && setError(e.message))
       .finally(() => alive && setLoading(false))
     return () => {

@@ -124,7 +124,12 @@
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
 }
 .hero--overlay .hero__sub {
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+  color: var(--text-1);
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 2px 14px rgba(255, 255, 255, 0.75);
+}
+:root[data-theme='dark'] .hero--overlay .hero__sub {
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
 }
 .hero__inner {
   position: relative;
@@ -771,6 +776,115 @@
   }
   .featured__sale {
     font-size: 25px;
+  }
+}
+
+/* ================= 게임 목록(/games) · 2단 레이아웃 ================= */
+.listing {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: var(--gap);
+  align-items: start;
+}
+.listing__side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  position: sticky;
+  top: 84px; /* 헤더 64px + 여백 */
+}
+.listing__tabs {
+  margin-bottom: 16px;
+}
+.chip--wish {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.chip--wish b {
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--brand-soft);
+  color: var(--brand);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+}
+.chip--wish.chip--active b {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.deal-grid--listing {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 860px) {
+  .deal-grid--listing {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 500px) {
+  .deal-grid--listing {
+    grid-template-columns: 1fr;
+  }
+}
+.rank__trend {
+  color: var(--brand);
+}
+.recent__icon {
+  color: var(--text-2);
+}
+
+/* 카드 위시 하트 (커버 좌상단) */
+.deal-card__wish {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(15, 13, 25, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: background 0.12s, color 0.12s, transform 0.12s;
+}
+.deal-card__wish:hover {
+  background: rgba(15, 13, 25, 0.68);
+  transform: scale(1.08);
+}
+.deal-card__wish.is-on {
+  color: #e8446a;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+/* 히어로 스토어 스트립: 아이콘 + 이름 */
+.hero__store {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.hero__store img {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .listing {
+    grid-template-columns: 1fr;
+  }
+  .listing__side {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+@media (max-width: 720px) {
+  .listing__side {
+    grid-template-columns: 1fr;
   }
 }
 

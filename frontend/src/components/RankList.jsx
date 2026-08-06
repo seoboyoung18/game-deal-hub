@@ -3,13 +3,19 @@ import { Trophy } from 'lucide-react'
 import { tier } from '../lib/tier.js'
 import { displayPrice, roundPct } from '../lib/format.js'
 
-// 홈 R2: 최저가 랭킹 TOP 5 (savings 상위)
-export default function RankList({ deals, currency = 'USD', rate = null }) {
+// 사이드 랭킹 위젯. 기본은 '최저가 랭킹'(홈), title/icon 을 바꿔 '트렌드 게임'(목록) 등으로 재사용.
+export default function RankList({
+  deals,
+  currency = 'USD',
+  rate = null,
+  title = '최저가 랭킹',
+  icon = <Trophy size={18} strokeWidth={2.4} className="rank__trophy" />,
+}) {
   return (
-    <aside className="rank" aria-label="최저가 랭킹 TOP 5">
+    <aside className="rank" aria-label={`${title} TOP ${deals.length}`}>
       <h3 className="rank__title">
-        <Trophy size={18} strokeWidth={2.4} className="rank__trophy" />
-        최저가 랭킹 <em>TOP {deals.length}</em>
+        {icon}
+        {title} <em>TOP {deals.length}</em>
       </h3>
       <ol className="rank__list">
         {deals.map((d, i) => {
