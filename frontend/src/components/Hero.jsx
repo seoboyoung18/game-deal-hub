@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Flame, Search } from 'lucide-react'
 import HeroCharacter from './HeroCharacter.jsx'
+import SearchSuggest from './SearchSuggest.jsx'
+import { useSuggest, useSuggestNav } from '../lib/useSuggest.js'
 import { HAS_BG } from '../lib/siteBg.js'
 import { api } from '../lib/api.js'
 
@@ -17,6 +19,9 @@ export default function Hero() {
   const [q, setQ] = useState('')
   const [stores, setStores] = useState([])
   const navigate = useNavigate()
+  const items = useSuggest(q)
+  const nav = useSuggestNav(items, (g) => navigate(`/game/${g.gameId}`))
+  const showSuggest = nav.open && items.length > 0 && q.trim().length >= 2
 
   useEffect(() => {
     api.getStores().then(setStores).catch(() => {})
@@ -50,12 +55,34 @@ export default function Hero() {
           <form className="hero__search" onSubmit={submit} role="search">
             <span className="hero__search-icon" aria-hidden><Search size={20} strokeWidth={2.2} /></span>
             <input
+              role="combobox"
+              aria-expanded={showSuggest}
+              aria-controls="hero-suggest"
+              aria-activedescendant={nav.active >= 0 ? `hero-suggest-${nav.active}` : undefined}
+              aria-autocomplete="list"
               value={q}
-              onChange={(e) => setQ(e.target.value)}
+              onChange={(e) => {
+                setQ(e.target.value)
+                nav.setOpen(true)
+              }}
+              onFocus={() => nav.setOpen(true)}
+              onBlur={() => nav.setOpen(false)}
+              onKeyDown={nav.onKeyDown}
               placeholder="게임 검색 (예: 사이버펑크, TEKKEN 7)"
               aria-label="게임 검색"
             />
             <button type="submit">검색</button>
+            {showSuggest && (
+              <SearchSuggest
+                id="hero-suggest"
+                q={q}
+                items={items}
+                active={nav.active}
+                onPick={(g) => navigate(`/game/${g.gameId}`)}
+                onHover={nav.setActive}
+                onAll={() => navigate(`/search?q=${encodeURIComponent(q.trim())}`)}
+              />
+            )}
           </form>
 
           {major.length > 0 && (
