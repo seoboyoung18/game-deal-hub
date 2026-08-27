@@ -51,7 +51,10 @@ export default function DealCard({ deal, currency = 'USD', rate = null }) {
 
       <div className="deal-card__body">
         <h3 className="deal-card__title" title={deal.title}>{deal.title}</h3>
-        <div className="deal-card__tags" aria-hidden={!deal.genres}>
+        <div className="deal-card__tags" aria-hidden={!deal.genres && !deal.koreanSupport}>
+          {deal.koreanSupport && (
+            <span className="tag tag--ko">{deal.koreanSupport === 'voice' ? '음성 한국어' : '자막 한글'}</span>
+          )}
           {deal.genres &&
             deal.genres.split('|').slice(0, 2).map((g) => (
               <span key={g} className="tag">{g}</span>

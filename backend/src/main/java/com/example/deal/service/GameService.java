@@ -1,6 +1,7 @@
 package com.example.deal.service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -9,18 +10,24 @@ import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.PageResponse;
 import com.example.deal.dto.StorePriceRow;
 import com.example.deal.exception.NotFoundException;
+import com.example.deal.fetcher.SteamSearchFetcher;
 import com.example.deal.repository.DealMapper;
 
 import lombok.RequiredArgsConstructor;
 
 /**
  * 게임 상세 조립 + 검색.
+ * 한글 검색어는 DB 제목(영어)으로 못 찾으므로 스팀 한국어 검색(storesearch)으로
+ * appid 를 받아 매칭한다 — 검색 그 질의에 한해서만 외부 호출.
  */
 @Service
 @RequiredArgsConstructor
 public class GameService {
 
+    private static final Pattern HANGUL = Pattern.compile("[가-힣]");
+
     private final DealMapper dealMapper;
+    private final SteamSearchFetcher steamSearchFetcher;
 
     public GameDetailResponse getGameDetail(String gameId) {
         GameDetailResponse game = dealMapper.findGameMeta(gameId);
@@ -32,10 +39,11 @@ public class GameService {
             deals.get(0).setBest(true); // 최저가
         }
         game.setDeals(deals);
+        game.setAllTimeLow(dealMapper.findAllTimeLow(gameId)); // 수집 시작 이후 최저
         return game;
     }
 
-    /** 제목 부분일치 검색(게임 단위). 빈 검색어는 빈 결과. */
+    /** 제목 부분일치 검색(게임 단위). 한글이면 스팀 매칭 우선. 빈 검색어는 빈 결과. */
     public PageResponse<GameSearchItem> searchGames(String q, int page, int size) {
         String query = q == null ? "" : q.trim();
         int p = Math.max(page, 0);
@@ -43,6 +51,19 @@ public class GameService {
         if (query.isEmpty()) {
             return PageResponse.of(List.of(), p, s, 0);
         }
+
+        // 한글 질의 → 스팀 한국어 검색으로 appid 확보 → 우리 DB 매칭 (결과 ≤10이라 페이징 없음)
+        if (HANGUL.matcher(query).find()) {
+            List<String> appIds = steamSearchFetcher.searchAppIds(query);
+            if (!appIds.isEmpty()) {
+                List<GameSearchItem> content = dealMapper.searchGamesByAppIds(appIds);
+                if (!content.isEmpty()) {
+                    return PageResponse.of(content, 0, s, content.size());
+                }
+            }
+            // 스팀에서 못 찾았거나 우리 DB에 없음 → ILIKE 폴백 (한글 제목이 없어 대부분 0건)
+        }
+
         int offset = p * s;
         List<GameSearchItem> content = dealMapper.searchGames(query, offset, s);
         long total = dealMapper.countSearchGames(query);

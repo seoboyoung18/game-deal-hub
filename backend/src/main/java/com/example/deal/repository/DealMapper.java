@@ -43,7 +43,16 @@ public interface DealMapper {
 
     void updateGameMeta(@Param("gameId") String gameId,
                         @Param("genres") String genres,
-                        @Param("shortDescKo") String shortDescKo);
+                        @Param("shortDescKo") String shortDescKo,
+                        @Param("koreanSupport") String koreanSupport);
+
+    // ---- 가격 이력 / 역대 최저가 ----
+    int recordPriceHistory();
+
+    BigDecimal findAllTimeLow(@Param("gameId") String gameId);
+
+    // ---- 한글 검색 (스팀 appid 매칭) ----
+    List<GameSearchItem> searchGamesByAppIds(@Param("appIds") List<String> appIds);
 
     List<String> findGenres();
 

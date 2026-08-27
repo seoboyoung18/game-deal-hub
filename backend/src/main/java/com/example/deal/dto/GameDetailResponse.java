@@ -1,5 +1,6 @@
 package com.example.deal.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,5 +19,7 @@ public class GameDetailResponse {
     private LocalDateTime releaseDate;
     private String genres;             // 한국어 장르 '|' 구분 (스팀 메타 보강)
     private String shortDescKo;        // 한국어 짧은 소개문
+    private String koreanSupport;      // 'voice'(음성까지) | 'sub'(자막) | null
+    private BigDecimal allTimeLow;     // 수집 시작 이후 최저가 (USD)
     private List<StorePriceRow> deals;
 }

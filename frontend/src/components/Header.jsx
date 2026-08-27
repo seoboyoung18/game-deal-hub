@@ -34,7 +34,7 @@ export default function Header({ initialQuery = '', showSearch = false }) {
               className="searchbar__input"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="게임 제목으로 검색"
+              placeholder="게임 검색 (예: 사이버펑크)"
               aria-label="게임 검색"
             />
             {q && (

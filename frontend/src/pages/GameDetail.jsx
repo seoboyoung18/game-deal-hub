@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { TrendingDown } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import StorePriceRow from '../components/StorePriceRow.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
+import { displayPrice } from '../lib/format.js'
 import { recordRecent } from '../lib/recentGames.js'
 import { hiResHero, fallbackTo } from '../lib/steamImg.js'
 
@@ -82,6 +84,11 @@ export default function GameDetail() {
                   <span className="meta-badge meta-badge--steam">스팀 {game.steamRatingPct}%</span>
                 ) : null}
                 {year && <span className="meta-badge">{year}</span>}
+                {game.koreanSupport && (
+                  <span className="meta-badge meta-badge--ko">
+                    {game.koreanSupport === 'voice' ? '음성 한국어' : '자막 한글'}
+                  </span>
+                )}
                 {game.genres &&
                   game.genres.split('|').map((g) => (
                     <span key={g} className="meta-badge meta-badge--genre">{g}</span>
@@ -94,6 +101,19 @@ export default function GameDetail() {
               <h2>
                 스토어별 가격<span className="detail__count">{deals.length}개 스토어</span>
               </h2>
+              {game.allTimeLow != null && deals.length > 0 && (() => {
+                const isAtl = Number(deals[0].salePrice) <= Number(game.allTimeLow)
+                return (
+                  <span
+                    className={`atl-badge ${isAtl ? 'atl-badge--now' : ''}`}
+                    title="딜모아가 가격을 수집하기 시작한 이후 기준이에요"
+                  >
+                    <TrendingDown size={14} strokeWidth={2.6} />
+                    역대 최저 {displayPrice(game.allTimeLow, { currency, rate })}
+                    {isAtl && ' · 지금이 최저가'}
+                  </span>
+                )
+              })()}
               <CurrencyToggle value={currency} onChange={setCurrency} />
             </div>
             {currency === 'KRW' && (

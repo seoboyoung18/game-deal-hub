@@ -99,6 +99,10 @@ public class DealService {
             log.info("[수집] 정렬 '{}' 완료", sortBy);
         }
 
+        // 가격 이력: 직전 기록과 다른 (게임×스토어)만 적재 — 역대 최저가·그래프 원천
+        int history = dealMapper.recordPriceHistory();
+        log.info("[이력] 가격 변동 {}건 기록", history);
+
         long totalDeals = dealMapper.countDeals();
         long elapsed = System.currentTimeMillis() - start;
         log.info("[수집] 완료 — 스토어 {}건 · 조회 {}건(중복 포함) · 정가0 제외 {}건 · 저장된 딜 총 {}건 · {}ms",
@@ -147,7 +151,7 @@ public class DealService {
         for (GameMetaRef ref : refs) {
             SteamMetaFetcher.SteamMeta m = steamMetaFetcher.fetchMeta(ref.getSteamAppId());
             if (m != null) {
-                dealMapper.updateGameMeta(ref.getGameId(), m.genres(), m.shortDescKo());
+                dealMapper.updateGameMeta(ref.getGameId(), m.genres(), m.shortDescKo(), m.koreanSupport());
                 if (m.genres() != null) {
                     updated++;
                 }

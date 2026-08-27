@@ -24,8 +24,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SteamMetaFetcher {
 
-    /** genres: '|' 구분 한국어 장르. 둘 다 null 일 수 있음(내려간 앱 등). */
-    public record SteamMeta(String genres, String shortDescKo) {}
+    /**
+     * genres: '|' 구분 한국어 장르 · koreanSupport: 'voice'(음성까지)/'sub'(자막)/null.
+     * 전부 null 일 수 있음(내려간 앱 등).
+     */
+    public record SteamMeta(String genres, String shortDescKo, String koreanSupport) {}
 
     private final RestClient rest;
 
@@ -60,7 +63,7 @@ public class SteamMetaFetcher {
             }
             if (!detail.path("success").asBoolean(false)) {
                 // 스팀에서 내려갔거나 지역 제한 — 완료로 마킹해 재시도 안 함
-                return new SteamMeta(null, null);
+                return new SteamMeta(null, null, null);
             }
             JsonNode data = detail.path("data");
 
@@ -83,10 +86,29 @@ public class SteamMetaFetcher {
             }
 
             String shortDesc = data.path("short_description").asText("").trim();
-            return new SteamMeta(genres, shortDesc.isEmpty() ? null : shortDesc);
+            return new SteamMeta(genres, shortDesc.isEmpty() ? null : shortDesc,
+                    parseKoreanSupport(data.path("supported_languages").asText("")));
         } catch (Exception e) {
             log.debug("[스팀메타] appid={} 실패: {}", steamAppId, e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * supported_languages(HTML 문자열)에서 한국어 지원 파싱.
+     * 예: "English, Korean<strong>*</strong>, Japanese" — <strong>*</strong> 는 음성(full audio) 지원.
+     * l=korean 요청이라 언어명이 "한국어" 로 올 수도 있어 둘 다 확인.
+     */
+    private String parseKoreanSupport(String languagesHtml) {
+        if (languagesHtml == null || languagesHtml.isEmpty()) {
+            return null;
+        }
+        boolean hasKorean = languagesHtml.contains("Korean") || languagesHtml.contains("한국어");
+        if (!hasKorean) {
+            return null;
+        }
+        boolean voice = languagesHtml.contains("Korean<strong>*</strong>")
+                || languagesHtml.contains("한국어<strong>*</strong>");
+        return voice ? "voice" : "sub";
     }
 }

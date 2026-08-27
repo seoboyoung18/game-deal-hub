@@ -24,4 +24,5 @@ public class DealResponse {
     private BigDecimal krwNormalPrice;
     private String thumbUrl;
     private String genres;             // 한국어 장르 '|' 구분 (스팀 메타 보강, 없으면 null)
+    private String koreanSupport;      // 'voice'(음성까지) | 'sub'(자막) | null
 }

@@ -52,7 +52,7 @@ export default function Hero() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="게임 검색 (예: TEKKEN 7 )"
+              placeholder="게임 검색 (예: 사이버펑크, TEKKEN 7)"
               aria-label="게임 검색"
             />
             <button type="submit">검색</button>

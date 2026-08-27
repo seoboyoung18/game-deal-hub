@@ -74,9 +74,35 @@
 
     <update id="updateGameMeta">
         UPDATE games
-        SET genres = #{genres}, short_desc_ko = #{shortDescKo}, meta_fetched_at = CURRENT_TIMESTAMP
+        SET genres = #{genres}, short_desc_ko = #{shortDescKo},
+            korean_support = #{koreanSupport}, meta_fetched_at = CURRENT_TIMESTAMP
         WHERE game_id = #{gameId}
     </update>
+
+    <!-- ============ 가격 이력 (수집 후 호출) ============ -->
+    <!-- (게임×스토어) 마지막 기록과 판매가가 다를 때만 적재 — 변동분만 쌓아 용량 최소화 -->
+    <insert id="recordPriceHistory">
+        INSERT INTO price_history (game_id, store_id, sale_price)
+        SELECT d.game_id, d.store_id, d.sale_price
+        FROM deals d
+        LEFT JOIN LATERAL (
+            SELECT ph.sale_price
+            FROM price_history ph
+            WHERE ph.game_id = d.game_id AND ph.store_id = d.store_id
+            ORDER BY ph.recorded_at DESC
+            LIMIT 1
+        ) last ON TRUE
+        WHERE last.sale_price IS DISTINCT FROM d.sale_price
+    </insert>
+
+    <!-- 역대 최저가(수집 시작 이후): 이력 ∪ 현재가 중 최솟값 -->
+    <select id="findAllTimeLow" resultType="java.math.BigDecimal">
+        SELECT MIN(p) FROM (
+            SELECT MIN(sale_price) AS p FROM price_history WHERE game_id = #{gameId}
+            UNION ALL
+            SELECT MIN(sale_price) FROM deals WHERE game_id = #{gameId}
+        ) t
+    </select>
 
     <!-- 장르 목록 (빈도 높은 순) — 필터 칩 구성용 -->
     <select id="findGenres" resultType="string">
@@ -103,12 +129,12 @@
     <select id="findDeals" resultType="com.example.deal.dto.DealResponse">
         SELECT t.deal_id, t.title, t.game_id, t.store_id, t.store_name,
                t.sale_price, t.normal_price, t.savings, t.currency,
-               t.krw_sale_price, t.krw_normal_price, t.thumb_url, t.genres
+               t.krw_sale_price, t.krw_normal_price, t.thumb_url, t.genres, t.korean_support
         FROM (
             SELECT DISTINCT ON (regexp_replace(lower(btrim(g.title)), '\s*[:-]*\s*((digital )?deluxe|ultimate|gold|complete|definitive|legendary|goty|game of the year|collectors?|premium|enhanced|anniversary|remastered|standard)( edition)?\s*$', ''))
                    d.deal_id, g.title, d.game_id, d.store_id, s.store_name,
                    d.sale_price, d.normal_price, d.savings, d.currency,
-                   d.krw_sale_price, d.krw_normal_price, g.thumb_url, g.genres, d.deal_rating
+                   d.krw_sale_price, d.krw_normal_price, g.thumb_url, g.genres, g.korean_support, d.deal_rating
             FROM deals d
             JOIN games  g ON g.game_id  = d.game_id
             JOIN stores s ON s.store_id = d.store_id
@@ -146,7 +172,7 @@
     <select id="findGameMeta" resultType="com.example.deal.dto.GameDetailResponse">
         SELECT game_id, title, steam_app_id, thumb_url,
                metacritic_score, steam_rating_pct, release_date,
-               genres, short_desc_ko
+               genres, short_desc_ko, korean_support
         FROM games
         WHERE game_id = #{gameId}
     </select>
@@ -183,6 +209,22 @@
         FROM games g
         JOIN deals d ON d.game_id = g.game_id
         WHERE g.title ILIKE '%' || #{q} || '%'
+    </select>
+
+    <!-- 한글 검색: 스팀 storesearch 로 받은 appid 들을 우리 DB와 매칭 -->
+    <select id="searchGamesByAppIds" resultType="com.example.deal.dto.GameSearchItem">
+        SELECT g.game_id, g.title, g.thumb_url,
+               MIN(d.sale_price)          AS min_sale_price,
+               'USD'                      AS currency,
+               COUNT(DISTINCT d.store_id) AS store_count,
+               string_agg(DISTINCT s.store_name, '|') AS store_names
+        FROM games g
+        JOIN deals  d ON d.game_id  = g.game_id
+        JOIN stores s ON s.store_id = d.store_id
+        WHERE g.steam_app_id IN
+        <foreach item="id" collection="appIds" open="(" separator="," close=")">#{id}</foreach>
+        GROUP BY g.game_id, g.title, g.thumb_url
+        ORDER BY min_sale_price ASC, g.title
     </select>
 
     <!-- ============ 검증/집계 ============ -->
