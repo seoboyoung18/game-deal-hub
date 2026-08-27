@@ -104,6 +104,16 @@
         ) t
     </select>
 
+    <!-- 가격 이력 (일 단위 최저가) — 상세 페이지 스파크라인용 -->
+    <select id="findPriceHistory" resultType="com.example.deal.dto.PricePoint">
+        SELECT date_trunc('day', recorded_at)::date AS day,
+               MIN(sale_price) AS price
+        FROM price_history
+        WHERE game_id = #{gameId}
+        GROUP BY 1
+        ORDER BY 1
+    </select>
+
     <!-- 장르 목록 (빈도 높은 순) — 필터 칩 구성용 -->
     <select id="findGenres" resultType="string">
         SELECT t.genre

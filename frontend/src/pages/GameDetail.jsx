@@ -5,6 +5,7 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import StorePriceRow from '../components/StorePriceRow.jsx'
+import PriceHistoryChart from '../components/PriceHistoryChart.jsx'
 import { DetailSkeleton } from '../components/Skeleton.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
@@ -130,6 +131,8 @@ export default function GameDetail() {
                 ₩ <strong>스팀</strong>은 실제 원화, 그 외 상점은 환율 <strong>대략 환산(~ 표시)</strong>이에요
               </p>
             )}
+
+            <PriceHistoryChart points={game.priceHistory} currency={currency} rate={rate} />
 
             <div className="price-list">
               {deals.map((row) => (

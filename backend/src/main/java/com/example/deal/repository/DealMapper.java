@@ -13,6 +13,7 @@ import com.example.deal.dto.DealResponse;
 import com.example.deal.dto.GameDetailResponse;
 import com.example.deal.dto.GameMetaRef;
 import com.example.deal.dto.GameSearchItem;
+import com.example.deal.dto.PricePoint;
 import com.example.deal.dto.SteamDealRef;
 import com.example.deal.dto.StoreDto;
 import com.example.deal.dto.StorePriceRow;
@@ -50,6 +51,8 @@ public interface DealMapper {
     int recordPriceHistory();
 
     BigDecimal findAllTimeLow(@Param("gameId") String gameId);
+
+    List<PricePoint> findPriceHistory(@Param("gameId") String gameId);
 
     // ---- 한글 검색 (스팀 appid 매칭) ----
     List<GameSearchItem> searchGamesByAppIds(@Param("appIds") List<String> appIds);

@@ -21,5 +21,6 @@ public class GameDetailResponse {
     private String shortDescKo;        // 한국어 짧은 소개문
     private String koreanSupport;      // 'voice'(음성까지) | 'sub'(자막) | null
     private BigDecimal allTimeLow;     // 수집 시작 이후 최저가 (USD)
+    private List<PricePoint> priceHistory; // 일 단위 최저가 추이 (스파크라인)
     private List<StorePriceRow> deals;
 }

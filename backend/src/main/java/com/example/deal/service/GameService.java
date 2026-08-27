@@ -40,6 +40,7 @@ public class GameService {
         }
         game.setDeals(deals);
         game.setAllTimeLow(dealMapper.findAllTimeLow(gameId)); // 수집 시작 이후 최저
+        game.setPriceHistory(dealMapper.findPriceHistory(gameId));
         return game;
     }
 
