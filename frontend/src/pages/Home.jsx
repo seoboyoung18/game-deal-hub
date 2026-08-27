@@ -18,6 +18,15 @@ export default function Home() {
   const rate = useExchangeRate()
   // 스포트라이트(핫딜·랭킹·추천) — 첫 진입 시 1회
   const [spot, setSpot] = useState(null)
+  // 히어로의 큰 검색이 화면 밖으로 나가면 헤더 검색을 대신 노출
+  const [pastHero, setPastHero] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setPastHero(window.scrollY > 280)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     let alive = true
@@ -56,7 +65,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header showSearch={pastHero} />
       <Hero />
       <main className="container home">
         {/* ① 오늘의 핫딜 + ② 최저가 랭킹 */}

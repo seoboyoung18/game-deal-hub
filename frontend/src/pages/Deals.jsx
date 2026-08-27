@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Flame, TrendingUp, Heart } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
@@ -10,32 +11,51 @@ import DealCard from '../components/DealCard.jsx'
 import RankList from '../components/RankList.jsx'
 import RecentGames from '../components/RecentGames.jsx'
 import Pagination from '../components/Pagination.jsx'
+import { CardGridSkeleton } from '../components/Skeleton.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 import { useWishlist } from '../lib/wishlist.js'
 
 const SIZE = 20
 
+// URL 쿼리 기본값 — 기본값과 같은 조건은 쿼리에서 지워 주소를 짧게 유지
+const DEFAULTS = { tab: 'all', sort: 'rating', store: '', genre: '', min: '', max: '', page: '1' }
+
 // 게임 목록 (헤더 '게임' 탭) — 좌: 필터·정렬·페이징 목록 / 우: 트렌드·최근 본 게임 사이드바.
+// 필터·정렬·페이지는 URL 쿼리가 원본 → 새로고침·뒤로가기·링크 공유 시 그대로 복원.
 // '위시리스트' 탭은 localStorage 스냅샷을 그대로 렌더 (저장 시점 가격).
 export default function Deals() {
+  const [params, setParams] = useSearchParams()
+  const read = (k) => params.get(k) ?? DEFAULTS[k]
+  const tab = read('tab') // all | wish
+  const sort = read('sort')
+  const storeId = read('store')
+  const genre = read('genre')
+  const price = { min: read('min'), max: read('max') }
+  const page = Math.max(0, (parseInt(read('page'), 10) || 1) - 1)
+
   const [stores, setStores] = useState([])
   const [deals, setDeals] = useState([])
   const [trend, setTrend] = useState([])
-  const [tab, setTab] = useState('all') // all | wish
-  const [sort, setSort] = useState('rating')
-  const [storeId, setStoreId] = useState('')
   const [genres, setGenres] = useState([])
-  const [genre, setGenre] = useState('')
-  const [price, setPrice] = useState({ min: '', max: '' })
   const [currency, setCurrency] = useCurrency()
   const rate = useExchangeRate()
-  const [page, setPage] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [retryTick, setRetryTick] = useState(0)
   const wishlist = useWishlist()
+
+  const patch = (changes) => {
+    const next = new URLSearchParams(params)
+    for (const [k, v] of Object.entries(changes)) {
+      const val = String(v ?? '')
+      if (val === '' || val === DEFAULTS[k]) next.delete(k)
+      else next.set(k, val)
+    }
+    setParams(next)
+  }
 
   useEffect(() => {
     api.getStores().then(setStores).catch(() => {})
@@ -63,24 +83,13 @@ export default function Deals() {
     return () => {
       alive = false
     }
-  }, [sort, storeId, genre, price.min, price.max, page])
+  }, [sort, storeId, genre, price.min, price.max, page, retryTick])
 
-  const onStore = (id) => {
-    setStoreId(id)
-    setPage(0)
-  }
-  const onSort = (s) => {
-    setSort(s)
-    setPage(0)
-  }
-  const onPrice = (p) => {
-    setPrice(p)
-    setPage(0)
-  }
-  const onGenre = (g) => {
-    setGenre(g)
-    setPage(0)
-  }
+  const onStore = (id) => patch({ store: id, page: 1 })
+  const onSort = (s) => patch({ sort: s, page: 1 })
+  const onPrice = (p) => patch({ min: p.min, max: p.max, page: 1 })
+  const onGenre = (g) => patch({ genre: g, page: 1 })
+  const onPage = (p) => patch({ page: p + 1 })
 
   const showAll = tab === 'all'
 
@@ -102,7 +111,7 @@ export default function Deals() {
             role="tab"
             aria-selected={showAll}
             className={`chip ${showAll ? 'chip--active' : ''}`}
-            onClick={() => setTab('all')}
+            onClick={() => patch({ tab: 'all' })}
           >
             전체 게임
           </button>
@@ -110,7 +119,7 @@ export default function Deals() {
             role="tab"
             aria-selected={!showAll}
             className={`chip chip--wish ${!showAll ? 'chip--active' : ''}`}
-            onClick={() => setTab('wish')}
+            onClick={() => patch({ tab: 'wish' })}
           >
             <Heart size={14} strokeWidth={2.6} /> 위시리스트{wishlist.length > 0 && <b>{wishlist.length}</b>}
           </button>
@@ -148,8 +157,15 @@ export default function Deals() {
                   </p>
                 )}
 
-                {loading && <div className="state">불러오는 중…</div>}
-                {error && <div className="state state--error">데이터를 불러오지 못했어요 · {error}</div>}
+                {loading && <CardGridSkeleton count={9} className="deal-grid deal-grid--listing" />}
+                {error && (
+                  <div className="state state--error">
+                    데이터를 불러오지 못했어요 · {error}
+                    <button className="state__retry" onClick={() => setRetryTick((t) => t + 1)}>
+                      다시 시도
+                    </button>
+                  </div>
+                )}
                 {!loading && !error && deals.length === 0 && (
                   <div className="state">조건에 맞는 할인이 없어요.</div>
                 )}
@@ -162,7 +178,7 @@ export default function Deals() {
                   </section>
                 )}
 
-                <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+                <Pagination page={page} totalPages={totalPages} onChange={onPage} />
               </>
             )}
 

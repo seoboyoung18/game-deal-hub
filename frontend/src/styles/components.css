@@ -107,6 +107,40 @@
   background: var(--bg-2);
 }
 
+/* 모바일 헤더: 로고·탭·토글 한 줄 유지, 검색바는 둘째 줄 전체 폭으로 */
+@media (max-width: 640px) {
+  .site-header__inner {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    row-gap: 8px;
+    gap: 10px;
+  }
+  .site-header .wordmark {
+    font-size: 20px;
+  }
+  .site-header__left {
+    gap: 8px;
+  }
+  .nav-link {
+    padding: 7px 10px;
+    font-size: 14px;
+  }
+  .searchbar {
+    order: 3;
+    flex-basis: 100%;
+    max-width: none;
+    height: 40px;
+  }
+  .theme-toggle {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 /* ================= Store badge ================= */
 .store-badge {
   display: inline-flex;
@@ -420,4 +454,87 @@
 }
 .state--error {
   color: var(--tier-red);
+}
+.state__retry {
+  display: block;
+  margin: 14px auto 0;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--card-border);
+  background: var(--card);
+  color: var(--text-strong);
+  font-weight: 700;
+  font-size: 14px;
+  transition: border-color 0.12s, color 0.12s;
+}
+.state__retry:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* ================= Skeleton (skelPulse 키프레임은 pages.css) ================= */
+.skel-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.skel-card__cover {
+  aspect-ratio: 16 / 9;
+  background: var(--bg-2);
+  animation: skelPulse 1.3s ease-in-out infinite;
+}
+.skel-card__body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skel-line {
+  display: block;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--bg-2);
+  animation: skelPulse 1.3s ease-in-out infinite;
+}
+.skel-line--w60 {
+  width: 60%;
+}
+.skel-line--w40 {
+  width: 40%;
+}
+.skel-line--title {
+  height: 28px;
+  width: 40%;
+  margin: 4px 0 10px;
+}
+.skel-banner {
+  aspect-ratio: 16 / 6;
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  margin-bottom: 20px;
+  animation: skelPulse 1.3s ease-in-out infinite;
+}
+.skel-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+}
+.skel-row {
+  height: 74px;
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  animation: skelPulse 1.3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skel-card__cover,
+  .skel-line,
+  .skel-banner,
+  .skel-row,
+  .spotlight--skel > div {
+    animation: none;
+  }
 }

@@ -4,9 +4,16 @@ export default function Pagination({ page, totalPages, onChange }) {
   const cur = page + 1 // 표시용 1-base
   const items = window_(cur, totalPages)
 
+  // 페이지 이동 후 목록 맨 위로 (모션 최소화 설정이면 즉시 이동)
+  const go = (p) => {
+    onChange(p)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' })
+  }
+
   return (
     <nav className="pagination" aria-label="페이지">
-      <button className="pagination__arrow" disabled={page <= 0} onClick={() => onChange(page - 1)}>
+      <button className="pagination__arrow" disabled={page <= 0} onClick={() => go(page - 1)}>
         ‹
       </button>
       {items.map((p, i) =>
@@ -16,7 +23,7 @@ export default function Pagination({ page, totalPages, onChange }) {
           <button
             key={p}
             className={`pagination__num ${p === cur ? 'is-active' : ''}`}
-            onClick={() => onChange(p - 1)}
+            onClick={() => go(p - 1)}
           >
             {p}
           </button>
@@ -25,7 +32,7 @@ export default function Pagination({ page, totalPages, onChange }) {
       <button
         className="pagination__arrow"
         disabled={page >= totalPages - 1}
-        onClick={() => onChange(page + 1)}
+        onClick={() => go(page + 1)}
       >
         ›
       </button>

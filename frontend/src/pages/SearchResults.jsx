@@ -4,27 +4,32 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import GameCard from '../components/GameCard.jsx'
 import Pagination from '../components/Pagination.jsx'
+import { CardGridSkeleton } from '../components/Skeleton.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 
 const SIZE = 18
 
-// S2 검색 결과
+// S2 검색 결과 — 페이지도 URL 쿼리로 (새 검색어 이동 시 page 쿼리가 없어 자연히 1페이지부터).
 export default function SearchResults() {
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const q = params.get('q') || ''
+  const page = Math.max(0, (parseInt(params.get('page'), 10) || 1) - 1)
   const [games, setGames] = useState([])
   const [total, setTotal] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
-  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [retryTick, setRetryTick] = useState(0)
   const [currency] = useCurrency()
   const rate = useExchangeRate()
 
-  useEffect(() => {
-    setPage(0)
-  }, [q])
+  const onPage = (p) => {
+    const next = new URLSearchParams(params)
+    if (p <= 0) next.delete('page')
+    else next.set('page', String(p + 1))
+    setParams(next)
+  }
 
   useEffect(() => {
     if (!q) {
@@ -50,7 +55,7 @@ export default function SearchResults() {
     return () => {
       alive = false
     }
-  }, [q, page])
+  }, [q, page, retryTick])
 
   return (
     <>
@@ -63,8 +68,15 @@ export default function SearchResults() {
           {!loading && !error && <span className="search__count">{total.toLocaleString()}건</span>}
         </div>
 
-        {loading && <div className="state">검색 중…</div>}
-        {error && <div className="state state--error">{error}</div>}
+        {loading && <CardGridSkeleton count={6} className="game-grid" />}
+        {error && (
+          <div className="state state--error">
+            {error}
+            <button className="state__retry" onClick={() => setRetryTick((t) => t + 1)}>
+              다시 시도
+            </button>
+          </div>
+        )}
         {!loading && !error && games.length === 0 && (
           <div className="state">
             {q ? '찾는 게임이 없어요.' : '검색어를 입력해 주세요.'}
@@ -79,7 +91,7 @@ export default function SearchResults() {
           </section>
         )}
 
-        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+        <Pagination page={page} totalPages={totalPages} onChange={onPage} />
       </main>
       <Footer />
     </>

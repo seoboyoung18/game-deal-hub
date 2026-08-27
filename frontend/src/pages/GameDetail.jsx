@@ -5,6 +5,7 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import StorePriceRow from '../components/StorePriceRow.jsx'
+import { DetailSkeleton } from '../components/Skeleton.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 import { displayPrice } from '../lib/format.js'
@@ -19,6 +20,7 @@ export default function GameDetail() {
   const [error, setError] = useState(null)
   const [currency, setCurrency] = useCurrency()
   const rate = useExchangeRate()
+  const [retryTick, setRetryTick] = useState(0)
 
   useEffect(() => {
     let alive = true
@@ -44,7 +46,7 @@ export default function GameDetail() {
     return () => {
       alive = false
     }
-  }, [gameId])
+  }, [gameId, retryTick])
 
   const year = game?.releaseDate ? new Date(game.releaseDate).getFullYear() : null
   const deals = game?.deals ?? []
@@ -53,8 +55,15 @@ export default function GameDetail() {
     <>
       <Header showSearch />
       <main className="container detail">
-        {loading && <div className="state">불러오는 중…</div>}
-        {error && <div className="state state--error">게임 정보를 불러오지 못했어요 · {error}</div>}
+        {loading && <DetailSkeleton />}
+        {error && (
+          <div className="state state--error">
+            게임 정보를 불러오지 못했어요 · {error}
+            <button className="state__retry" onClick={() => setRetryTick((t) => t + 1)}>
+              다시 시도
+            </button>
+          </div>
+        )}
 
         {!loading && !error && game && (
           <>
