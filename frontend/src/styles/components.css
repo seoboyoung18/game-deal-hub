@@ -34,7 +34,7 @@
   padding: 8px 14px;
   border-radius: var(--radius-pill);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-2);
   transition: color 0.12s, background 0.12s;
 }
@@ -161,25 +161,41 @@
 .store-badge__name {
   font-size: 13px;
   color: var(--text-1);
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* ================= Discount badge ================= */
+/* ================= Discount badge — 세일 태그 (시그니처) =================
+   왼쪽 뾰족 꼭짓점 + 끈 구멍으로 실제 가격표 모양. 색은 티어 규칙 그대로. */
 .discount-badge {
+  position: relative;
   color: #fff;
   font-weight: 800;
   font-size: 13px;
-  padding: 4px 9px;
-  border-radius: 8px;
+  padding: 4px 10px 4px 16px;
   letter-spacing: -0.01em;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-variant-numeric: tabular-nums;
+  clip-path: polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 50%);
 }
-/* 다크 테마: 티어색이 밝은 톤으로 바뀌므로 뱃지 글자는 어둡게 */
+.discount-badge::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.85);
+}
+/* 다크 테마: 티어색이 밝은 톤으로 바뀌므로 뱃지 글자·구멍은 어둡게 */
 :root[data-theme='dark'] .discount-badge {
   color: #12101c;
+}
+:root[data-theme='dark'] .discount-badge::after {
+  background: rgba(18, 16, 28, 0.75);
 }
 
 /* ================= Chips ================= */
@@ -193,7 +209,7 @@
   padding: 0 16px;
   border-radius: var(--radius-pill);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-1);
   background: var(--card);
   border: 1px solid var(--card-border);
@@ -366,7 +382,7 @@
 }
 .deal-card__title {
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-strong);
   line-height: 1.35;
   height: 2.7em;
@@ -380,6 +396,20 @@
   align-items: baseline;
   gap: 8px;
   margin-top: 2px;
+}
+/* 가격 숫자는 고정폭(tabular) — 자릿수가 달라도 흔들리지 않게 */
+.deal-card__sale,
+.deal-card__normal,
+.featured__sale,
+.featured__normal,
+.rank__price,
+.rank__meta b,
+.price-row__sale,
+.price-row__normal,
+.game-card__low,
+.atl-badge,
+.home__count strong {
+  font-variant-numeric: tabular-nums;
 }
 .deal-card__normal {
   font-size: 13px;
