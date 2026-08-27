@@ -178,6 +178,10 @@
   letter-spacing: -0.01em;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
+/* 다크 테마: 티어색이 밝은 톤으로 바뀌므로 뱃지 글자는 어둡게 */
+:root[data-theme='dark'] .discount-badge {
+  color: #12101c;
+}
 
 /* ================= Chips ================= */
 .chips {

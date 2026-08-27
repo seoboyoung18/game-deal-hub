@@ -63,6 +63,13 @@
   --text-3: #6f6c84;
   --price-strike: #6f6c84;
 
+  /* 할인율 티어 색 — 어두운 카드 위에서 대비가 나오도록 밝은 톤으로 오버라이드 */
+  --tier-green: #4ade80;
+  --tier-amber: #fbbf24;
+  --tier-purple: #a78bfa;
+  --tier-red: #f87171;
+  --tier-blue: #38bdf8;
+
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-hover: 0 4px 10px rgba(0, 0, 0, 0.5), 0 18px 40px rgba(0, 0, 0, 0.62);
   --hero-grad: linear-gradient(135deg, #17162a 0%, #141327 45%, #101426 100%);

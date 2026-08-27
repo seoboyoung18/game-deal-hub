@@ -28,63 +28,6 @@
   bottom: -110px;
   left: -40px;
 }
-/* 배경 이미지 레이어 (src/assets/hero-bg.* 있으면 자동 표시) */
-.hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-}
-.hero__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    90deg,
-    rgba(245, 244, 251, 0.96) 0%,
-    rgba(245, 244, 251, 0.72) 42%,
-    rgba(245, 244, 251, 0.12) 100%
-  );
-}
-:root[data-theme='dark'] .hero__scrim {
-  background: linear-gradient(
-    90deg,
-    rgba(13, 13, 20, 0.95) 0%,
-    rgba(13, 13, 20, 0.72) 42%,
-    rgba(13, 13, 20, 0.18) 100%
-  );
-}
-/* 배경 이미지가 있으면 데코 블롭 숨김 */
-.hero--has-bg::before,
-.hero--has-bg::after {
-  display: none;
-}
-/* 밤 배경: 어두운 가림막 + 밝은 글자 (테마 무관 가독성) */
-.hero--night .hero__scrim {
-  background: linear-gradient(
-    90deg,
-    rgba(10, 10, 18, 0.9) 0%,
-    rgba(10, 10, 18, 0.62) 42%,
-    rgba(10, 10, 18, 0.14) 100%
-  );
-}
-.hero--night .hero__title {
-  color: #f4f2fc;
-}
-.hero--night .hero__sub {
-  color: rgba(255, 255, 255, 0.82);
-}
-.hero--night .hero__badge {
-  background: rgba(124, 92, 224, 0.32);
-  color: #ddd0fb;
-}
-.hero--night .hero__store {
-  color: #eae8f5;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
 /* ================= 사이트 전체 배경 ================= */
 .site-bg {
   position: fixed;
@@ -98,16 +41,13 @@
   background-size: cover;
   background-position: center;
 }
-/* 아주 옅은 틴트만 (배경이 잘 보이게). 진하게/연하게는 opacity 값으로 조절 */
+/* 틴트는 항상 현재 테마의 배경색 — 어떤 사진·테마 조합에서도 글자 대비를 보장.
+   (개별 요소 text-shadow 보정 대신 여기 opacity 하나로 조절) */
 .site-bg__tint {
   position: absolute;
   inset: 0;
   background: var(--bg);
-  opacity: 0.12;
-}
-.site-bg--night .site-bg__tint {
-  background: #0a0a14;
-  opacity: 0.28;
+  opacity: 0.55;
 }
 
 /* 배경 위에서는 히어로를 투명 처리 (배경이 그대로 보이게) */
@@ -119,17 +59,10 @@
 .hero--overlay::after {
   display: none;
 }
-/* 배경 위 글자 가독성 (옅은 그림자) */
-.hero--overlay .hero__title {
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.28);
-}
+/* 배경 위 서브카피는 살짝 진하게 (가독성은 site-bg 틴트가 담당) */
 .hero--overlay .hero__sub {
   color: var(--text-1);
   font-weight: 600;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 2px 14px rgba(255, 255, 255, 0.75);
-}
-:root[data-theme='dark'] .hero--overlay .hero__sub {
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
 }
 .hero__inner {
   position: relative;
@@ -251,42 +184,6 @@
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
 
-/* 배경 위에 바로 얹히는 텍스트 가독성 (검색 제목·건수·빈상태·푸터·섹션) */
-.section-title,
-.home__count,
-.search__title,
-.search__count {
-  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
-}
-.search__count {
-  color: var(--text-1);
-}
-.state {
-  color: var(--text-strong);
-  font-weight: 500;
-  text-shadow: 0 1px 12px rgba(255, 255, 255, 0.7);
-}
-.state__hint {
-  color: var(--text-strong);
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.95), 0 2px 16px rgba(255, 255, 255, 0.9);
-}
-.site-footer__note {
-  color: var(--text-1);
-  text-shadow: 0 1px 10px rgba(255, 255, 255, 0.6);
-}
-.site-footer__meta {
-  color: var(--text-2);
-}
-:root[data-theme='dark'] .section-title,
-:root[data-theme='dark'] .home__count,
-:root[data-theme='dark'] .search__title,
-:root[data-theme='dark'] .search__count,
-:root[data-theme='dark'] .state,
-:root[data-theme='dark'] .state__hint,
-:root[data-theme='dark'] .site-footer__note {
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.65);
-}
 .hero__sub {
   margin: 16px 0 26px;
   font-size: 16px;
@@ -1009,10 +906,6 @@
   font-size: 15px;
   line-height: 1.7;
   color: var(--text-strong);
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.85), 0 2px 12px rgba(255, 255, 255, 0.6);
-}
-:root[data-theme='dark'] .detail__desc {
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
 }
 .detail__pricehead {
   display: flex;
