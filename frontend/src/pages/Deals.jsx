@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Flame, TrendingUp, Heart } from 'lucide-react'
+import { Flame, TrendingUp, Heart, SlidersHorizontal } from 'lucide-react'
 import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import StoreFilterChips from '../components/StoreFilterChips.jsx'
@@ -45,7 +45,12 @@ export default function Deals() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [retryTick, setRetryTick] = useState(0)
+  const [filtersOpen, setFiltersOpen] = useState(false) // 모바일(≤860px)에서만 쓰는 토글
   const wishlist = useWishlist()
+
+  // 모바일 필터 버튼에 표시할 활성 조건 개수
+  const activeFilters =
+    [storeId, genre, price.min, price.max].filter(Boolean).length + (sort !== DEFAULTS.sort ? 1 : 0)
 
   const patch = (changes) => {
     const next = new URLSearchParams(params)
@@ -99,25 +104,23 @@ export default function Deals() {
       <main className="container home">
         <div className="home__head">
           <h2 className="section-title">
-            <Flame size={20} strokeWidth={2.4} style={{ color: '#ff7043' }} /> 지금 뜨는 할인
+            <Flame size={20} strokeWidth={2.4} style={{ color: 'var(--accent-flame)' }} /> 지금 뜨는 할인
           </h2>
           {showAll && !loading && !error && (
             <span className="home__count"><strong>{total.toLocaleString()}</strong>개</span>
           )}
         </div>
 
-        <div className="chips listing__tabs" role="tablist" aria-label="목록 전환">
+        <div className="chips listing__tabs" role="group" aria-label="목록 전환">
           <button
-            role="tab"
-            aria-selected={showAll}
+            aria-pressed={showAll}
             className={`chip ${showAll ? 'chip--active' : ''}`}
             onClick={() => patch({ tab: 'all' })}
           >
             전체 게임
           </button>
           <button
-            role="tab"
-            aria-selected={!showAll}
+            aria-pressed={!showAll}
             className={`chip chip--wish ${!showAll ? 'chip--active' : ''}`}
             onClick={() => patch({ tab: 'wish' })}
           >
@@ -129,7 +132,16 @@ export default function Deals() {
           <div className="listing__main">
             {showAll && (
               <>
-                <div className="home__toolbar">
+                <button
+                  type="button"
+                  className="filter-toggle"
+                  aria-expanded={filtersOpen}
+                  onClick={() => setFiltersOpen((o) => !o)}
+                >
+                  <SlidersHorizontal size={15} strokeWidth={2.4} />
+                  필터·정렬{activeFilters > 0 && <b>{activeFilters}</b>}
+                </button>
+                <div className={`home__toolbar ${filtersOpen ? 'is-open' : ''}`}>
                   <StoreFilterChips stores={stores} value={storeId} onChange={onStore} />
                   <div className="home__controls">
                     <CurrencyToggle value={currency} onChange={setCurrency} />

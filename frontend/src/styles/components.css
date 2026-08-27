@@ -78,9 +78,8 @@
 }
 .searchbar__clear {
   color: var(--text-3);
-  font-size: 12px;
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;

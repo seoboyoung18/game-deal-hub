@@ -291,6 +291,11 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+.home__tools {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
 .home__count {
   color: var(--text-2);
   font-size: 14px;
@@ -739,10 +744,10 @@
 /* 카드 위시 하트 (커버 좌상단) */
 .deal-card__wish {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 32px;
-  height: 32px;
+  top: 8px;
+  left: 8px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -794,20 +799,80 @@
   display: block;
 }
 
+/* ≤1024: 사이드바를 목록 '위' 가로 스크롤 스트립으로 — 목록·페이징 아래로 밀려 안 보이던 문제 해결 */
 @media (max-width: 1024px) {
   .listing {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* 기본값 start면 자식이 내용 폭만큼 커져 가로 스크롤 유발 */
   }
   .listing__side {
+    order: -1;
     position: static;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
+    gap: 14px;
+  }
+  .rank {
+    padding: 12px 14px;
+  }
+  .rank__title {
+    margin-bottom: 6px;
+    font-size: 15px;
+  }
+  .rank__list {
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-bottom: 4px;
+  }
+  .rank__list li {
+    flex: none;
+  }
+  .rank__row {
+    width: 240px;
+    padding: 6px;
   }
 }
-@media (max-width: 720px) {
-  .listing__side {
-    grid-template-columns: 1fr;
+
+/* ≤860: 필터 툴바는 '필터·정렬' 버튼으로 접어두고, 열면 카드 패널로 */
+.filter-toggle {
+  display: none;
+}
+@media (max-width: 860px) {
+  .filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 16px;
+    margin-bottom: 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--card-border);
+    background: var(--card);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-1);
+  }
+  .filter-toggle b {
+    font-size: 12px;
+    font-weight: 800;
+    background: var(--brand);
+    color: #fff;
+    padding: 1px 8px;
+    border-radius: var(--radius-pill);
+  }
+  .home__toolbar {
+    display: none;
+  }
+  .home__toolbar.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: var(--shadow);
   }
 }
 

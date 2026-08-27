@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Zap, ArrowRight } from 'lucide-react'
+import { Zap, ArrowRight, Gamepad2 } from 'lucide-react'
 import StoreBadge from './StoreBadge.jsx'
 import DiscountBadge from './DiscountBadge.jsx'
 import { tier } from '../lib/tier.js'
@@ -17,7 +17,7 @@ export default function FeaturedDeal({ deal, currency = 'USD', rate = null }) {
         {deal.thumbUrl ? (
           <img src={hiResCard(deal.thumbUrl)} onError={fallbackTo(deal.thumbUrl)} alt={deal.title} />
         ) : (
-          <div className="featured__cover-empty" aria-hidden>🎮</div>
+          <div className="featured__cover-empty" aria-hidden><Gamepad2 size={48} /></div>
         )}
         <div className="featured__badge">
           <DiscountBadge savings={deal.savings} />

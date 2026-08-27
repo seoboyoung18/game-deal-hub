@@ -27,6 +27,9 @@
   --tier-red: #dc2626;
   --tier-blue: #0284c7;
 
+  /* 포인트 (티어 외 강조색) */
+  --accent-flame: #ff7043;
+
   /* 스토어 뱃지 색 */
   --store-steam: #66c0f4;
   --store-epic: #c9cedb;

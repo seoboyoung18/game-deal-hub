@@ -5,6 +5,7 @@ import Header from '../components/Header.jsx'
 import Hero from '../components/Hero.jsx'
 import Footer from '../components/Footer.jsx'
 import DealCard from '../components/DealCard.jsx'
+import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import FeaturedDeal from '../components/FeaturedDeal.jsx'
 import RankList from '../components/RankList.jsx'
 import PerkStrip from '../components/PerkStrip.jsx'
@@ -14,7 +15,7 @@ import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
 // S1 홈 — 스포트라이트(핫딜·랭킹·추천)와 기능 소개.
 // 전체 목록(필터·페이징)은 헤더 '게임' 탭의 /games (Deals.jsx)로 분리.
 export default function Home() {
-  const [currency] = useCurrency()
+  const [currency, setCurrency] = useCurrency()
   const rate = useExchangeRate()
   // 스포트라이트(핫딜·랭킹·추천) — 첫 진입 시 1회
   const [spot, setSpot] = useState(null)
@@ -68,6 +69,11 @@ export default function Home() {
       <Header showSearch={pastHero} />
       <Hero />
       <main className="container home">
+        {/* 표시 통화 — 목록·상세와 같은 설정 공유 */}
+        <div className="home__tools">
+          <CurrencyToggle value={currency} onChange={setCurrency} />
+        </div>
+
         {/* ① 오늘의 핫딜 + ② 최저가 랭킹 */}
         {spot === null && (
           <div className="spotlight spotlight--skel" aria-hidden>

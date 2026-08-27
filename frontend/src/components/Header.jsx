@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Search, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle.jsx'
 
 // 헤더: 로고+내비 탭(좌) · [검색바(옵션)] · 테마 토글(우).
@@ -29,7 +30,7 @@ export default function Header({ initialQuery = '', showSearch = false }) {
 
         {showSearch && (
           <form className="searchbar" onSubmit={onSubmit} role="search">
-            <span className="searchbar__icon" aria-hidden>🔍</span>
+            <span className="searchbar__icon" aria-hidden><Search size={15} strokeWidth={2.4} /></span>
             <input
               className="searchbar__input"
               value={q}
@@ -39,7 +40,7 @@ export default function Header({ initialQuery = '', showSearch = false }) {
             />
             {q && (
               <button type="button" className="searchbar__clear" onClick={() => setQ('')} aria-label="지우기">
-                ✕
+                <X size={14} strokeWidth={2.4} />
               </button>
             )}
           </form>

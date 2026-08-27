@@ -58,6 +58,24 @@ ol {
   padding: 0 20px;
 }
 
+/* 키보드 포커스 링 (마우스 클릭에는 안 뜸) */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* 모션 최소화 설정: 모든 애니메이션·전환·스무스 스크롤 끔 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* 로고 워드마크: 뒤에 보라 점 액센트 */
 .wordmark {
   font-weight: 900;

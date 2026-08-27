@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { History } from 'lucide-react'
+import { History, Gamepad2 } from 'lucide-react'
 import { useRecentGames } from '../lib/recentGames.js'
 import { displayPrice } from '../lib/format.js'
 
@@ -21,7 +21,7 @@ export default function RecentGames({ currency = 'USD', rate = null }) {
                 {g.thumbUrl ? (
                   <img src={g.thumbUrl} alt="" loading="lazy" />
                 ) : (
-                  <span aria-hidden>🎮</span>
+                  <Gamepad2 size={18} aria-hidden />
                 )}
               </span>
               <span className="rank__info">

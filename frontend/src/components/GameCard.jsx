@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Gamepad2 } from 'lucide-react'
 import { hiResCard, fallbackTo } from '../lib/steamImg.js'
 import StoreBadge from './StoreBadge.jsx'
 import { displayPrice } from '../lib/format.js'
@@ -18,7 +19,7 @@ export default function GameCard({ game, currency, rate }) {
             loading="lazy"
           />
         ) : (
-          <div className="game-card__cover-empty" aria-hidden>🎮</div>
+          <div className="game-card__cover-empty" aria-hidden><Gamepad2 size={30} /></div>
         )}
       </div>
       <div className="game-card__body">

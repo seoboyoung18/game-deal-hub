@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Trophy } from 'lucide-react'
+import { Trophy, Gamepad2 } from 'lucide-react'
 import { tier } from '../lib/tier.js'
 import { displayPrice, roundPct } from '../lib/format.js'
 
@@ -29,7 +29,7 @@ export default function RankList({
                   {d.thumbUrl ? (
                     <img src={d.thumbUrl} alt="" loading="lazy" />
                   ) : (
-                    <span aria-hidden>🎮</span>
+                    <Gamepad2 size={18} aria-hidden />
                   )}
                 </span>
                 <span className="rank__info">

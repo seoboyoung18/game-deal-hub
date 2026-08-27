@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Heart } from 'lucide-react'
+import { Heart, Gamepad2 } from 'lucide-react'
 import StoreBadge from './StoreBadge.jsx'
 import DiscountBadge from './DiscountBadge.jsx'
 import { tier } from '../lib/tier.js'
@@ -33,7 +33,7 @@ export default function DealCard({ deal, currency = 'USD', rate = null }) {
             loading="lazy"
           />
         ) : (
-          <div className="deal-card__cover-empty" aria-hidden>🎮</div>
+          <div className="deal-card__cover-empty" aria-hidden><Gamepad2 size={32} /></div>
         )}
         <div className="deal-card__badge">
           <DiscountBadge savings={deal.savings} />
