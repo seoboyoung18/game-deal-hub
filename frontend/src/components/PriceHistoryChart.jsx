@@ -31,6 +31,7 @@ export default function PriceHistoryChart({ points, currency = 'USD', rate = nul
   const area = `${line} L${x(data.length - 1).toFixed(1)},${H - PAD_BOT} L${x(0).toFixed(1)},${H - PAD_BOT} Z`
   const minIdx = prices.indexOf(min)
   const last = data.length - 1
+  const minPos = minIdx / last // 최저점의 가로 위치(0=왼쪽 끝, 1=오른쪽 끝)
 
   const fmt = (v) => displayPrice(v, { currency, rate })
   const fmtDay = (iso) => {
@@ -89,13 +90,15 @@ export default function PriceHistoryChart({ points, currency = 'USD', rate = nul
             />
           )}
 
-          {/* 최저점 강조 + 라벨 (선택적 직접 라벨) */}
+          {/* 최저점 강조 + 라벨 (선택적 직접 라벨).
+              라벨 정렬은 점 개수가 아니라 가로 위치 비율로 정한다 —
+              개수 기준이면 2점짜리(minIdx=1)가 middle 로 잡혀 오른쪽 끝에서 라벨이 잘렸다 */}
           <circle className="pricechart__dot" cx={x(minIdx)} cy={y(min)} r={4} />
           <text
             className="pricechart__axis pricechart__axis--min"
             x={x(minIdx)}
             y={H - 6}
-            textAnchor={minIdx < data.length / 6 ? 'start' : minIdx > (data.length * 5) / 6 ? 'end' : 'middle'}
+            textAnchor={minPos < 0.15 ? 'start' : minPos > 0.85 ? 'end' : 'middle'}
           >
             최저 {fmt(min)}
           </text>
