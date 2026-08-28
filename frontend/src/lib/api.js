@@ -35,6 +35,8 @@ export const api = {
   getGame: (gameId) => get(`/games/${gameId}`),
   /** 게임 검색: { q, page, size } */
   searchGames: (params) => get('/games/search', params),
+  /** 가격 알림용 — 여러 게임의 현재 최저가 (gameId 배열) */
+  getPrices: (gameIds) => get('/games/prices', { ids: gameIds.join(',') }),
   /** USD→KRW 환율 */
   getExchangeRate: () => get('/exchange-rate'),
 }

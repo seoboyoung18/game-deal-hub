@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Search, X } from 'lucide-react'
 import ThemeToggle from './ThemeToggle.jsx'
 import SearchSuggest from './SearchSuggest.jsx'
+import AlertBell from './AlertBell.jsx'
 import { useSuggest, useSuggestNav } from '../lib/useSuggest.js'
 
 // 헤더: 로고+내비 탭(좌) · [검색바(옵션)] · 테마 토글(우).
@@ -73,7 +74,10 @@ export default function Header({ initialQuery = '', showSearch = false }) {
           </form>
         )}
 
-        <ThemeToggle />
+        <div className="site-header__right">
+          <AlertBell />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   )

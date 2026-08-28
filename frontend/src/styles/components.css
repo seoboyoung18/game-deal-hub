@@ -211,7 +211,8 @@
     max-width: none;
     height: 40px;
   }
-  .theme-toggle {
+  .theme-toggle,
+  .alertbell__btn {
     width: 36px;
     height: 36px;
   }
@@ -646,5 +647,359 @@
   .skel-row,
   .spotlight--skel > div {
     animation: none;
+  }
+}
+
+/* ============================================================
+   가격 알림 — 헤더 벨 + 상세 목표가 폼
+   ============================================================ */
+.site-header__right {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.alertbell {
+  position: relative;
+  flex: none;
+}
+.alertbell__btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--text-1);
+  background: var(--bg-2);
+  border: 1px solid var(--card-border);
+  transition: color 0.15s, background 0.15s;
+}
+.alertbell__btn:hover {
+  color: var(--brand);
+}
+.alertbell__btn.has-unseen {
+  color: var(--brand);
+  background: var(--brand-soft);
+}
+.alertbell__badge {
+  position: absolute;
+  top: 2px;
+  right: 1px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--tier-red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 17px;
+  font-variant-numeric: tabular-nums;
+}
+
+.alertpanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  width: min(360px, calc(100vw - 32px));
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-hover);
+  padding: 6px;
+}
+.alertpanel__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 10px 6px;
+}
+.alertpanel__head strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.alertpanel__count {
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.alertpanel__empty {
+  padding: 6px 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.alertpanel__empty strong {
+  color: var(--text-1);
+  font-weight: 600;
+}
+.alertpanel__list {
+  max-height: 380px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.alertrow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: 9px;
+}
+.alertrow:hover {
+  background: var(--bg-2);
+}
+.alertrow.is-fresh {
+  background: var(--brand-soft);
+}
+.alertrow__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  color: inherit;
+  text-decoration: none;
+}
+.alertrow__thumb {
+  flex: none;
+  width: 56px;
+  height: 32px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg-2);
+  display: grid;
+  place-items: center;
+  color: var(--text-3);
+}
+.alertrow__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.alertrow__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.alertrow__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.alertrow__prices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.alertrow__now {
+  color: var(--text-2);
+}
+.alertrow.is-hit .alertrow__now {
+  color: var(--tier-green);
+  font-weight: 800;
+}
+.alertrow__store {
+  color: var(--text-3);
+}
+.alertrow__del {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  margin-right: 4px;
+  border-radius: 50%;
+  color: var(--text-3);
+}
+.alertrow__del:hover {
+  color: var(--tier-red);
+  background: var(--bg);
+}
+
+/* 상세 목표가 폼 */
+.alertform {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 16px 0 20px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-sm);
+}
+.alertform--set {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.alertform--set.is-hit {
+  border-color: var(--tier-green);
+}
+.alertform__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+.alertform--set.is-hit .alertform__icon {
+  color: var(--tier-green);
+  background: transparent;
+  border: 1px solid var(--tier-green);
+}
+.alertform__summary {
+  flex: 1;
+  min-width: 180px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-1);
+}
+.alertform__summary strong {
+  color: var(--text-strong);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.alertform__field {
+  flex: 1;
+  min-width: 0;
+}
+.alertform__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.alertform__hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.alertform__inputrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+.alertform__unit {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-2);
+}
+.alertform__input {
+  width: 110px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--card-border);
+  background: var(--bg);
+  color: var(--text-strong);
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.alertform__input:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+.alertform__suffix {
+  margin-right: 4px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.alertform__actions {
+  display: flex;
+  gap: 6px;
+}
+.alertform__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid var(--card-border);
+  background: var(--bg-2);
+  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s, color 0.15s;
+}
+.alertform__btn:hover {
+  color: var(--brand);
+}
+.alertform__btn--primary {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.alertform__btn--primary:hover {
+  background: var(--brand-hover);
+  color: #fff;
+}
+.alertform__btn--ghost {
+  background: transparent;
+}
+.alertform__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.alertform__preset {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--card-border);
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s, border-color 0.15s;
+}
+.alertform__preset:hover {
+  color: var(--brand);
+  border-color: var(--brand);
+}
+.alertform__err {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--tier-red);
+}
+.alertform__note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-3);
+}
+
+@media (max-width: 860px) {
+  .alertpanel {
+    right: -8px;
+  }
+  .alertform__input {
+    width: 96px;
   }
 }

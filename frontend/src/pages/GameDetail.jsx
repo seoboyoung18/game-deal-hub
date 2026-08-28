@@ -6,6 +6,7 @@ import Footer from '../components/Footer.jsx'
 import CurrencyToggle from '../components/CurrencyToggle.jsx'
 import StorePriceRow from '../components/StorePriceRow.jsx'
 import PriceHistoryChart from '../components/PriceHistoryChart.jsx'
+import PriceAlertForm from '../components/PriceAlertForm.jsx'
 import { DetailSkeleton } from '../components/Skeleton.jsx'
 import { api } from '../lib/api.js'
 import { useCurrency, useExchangeRate } from '../lib/useCurrency.js'
@@ -133,6 +134,13 @@ export default function GameDetail() {
             )}
 
             <PriceHistoryChart points={game.priceHistory} currency={currency} rate={rate} />
+
+            <PriceAlertForm
+              game={game}
+              lowest={deals[0]?.salePrice ?? null}
+              currency={currency}
+              rate={rate}
+            />
 
             <div className="price-list">
               {deals.map((row) => (
