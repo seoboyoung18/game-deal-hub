@@ -12,6 +12,7 @@ import com.example.deal.domain.Store;
 import com.example.deal.dto.DealResponse;
 import com.example.deal.dto.GameDetailResponse;
 import com.example.deal.dto.GameMetaRef;
+import com.example.deal.dto.GamePriceSnapshot;
 import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.PricePoint;
 import com.example.deal.dto.SteamDealRef;
@@ -79,6 +80,9 @@ public interface DealMapper {
     GameDetailResponse findGameMeta(@Param("gameId") String gameId);
 
     List<StorePriceRow> findGameDeals(@Param("gameId") String gameId);
+
+    /** 여러 게임의 현재 최저가를 한 번에 (가격 알림 비교용). */
+    List<GamePriceSnapshot> findLowestPrices(@Param("gameIds") List<String> gameIds);
 
     // ---- 게임 검색 ----
     List<GameSearchItem> searchGames(@Param("q") String q,

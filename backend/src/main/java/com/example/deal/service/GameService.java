@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 
 import com.example.deal.dto.GameDetailResponse;
+import com.example.deal.dto.GamePriceSnapshot;
 import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.PageResponse;
 import com.example.deal.dto.StorePriceRow;
@@ -26,6 +27,9 @@ public class GameService {
 
     private static final Pattern HANGUL = Pattern.compile("[가-힣]");
 
+    /** 알림 목록 상한(프론트 localStorage 상한과 맞춤) — IN 절 폭주 방지. */
+    private static final int MAX_PRICE_IDS = 50;
+
     private final DealMapper dealMapper;
     private final SteamSearchFetcher steamSearchFetcher;
 
@@ -42,6 +46,26 @@ public class GameService {
         game.setAllTimeLow(dealMapper.findAllTimeLow(gameId)); // 수집 시작 이후 최저
         game.setPriceHistory(dealMapper.findPriceHistory(gameId));
         return game;
+    }
+
+    /**
+     * 여러 게임의 현재 최저가. 가격 알림은 로그인이 없어 브라우저(localStorage)에 담아두고,
+     * 여기서 받은 최저가와 목표가를 클라이언트가 비교한다.
+     */
+    public List<GamePriceSnapshot> getLowestPrices(List<String> gameIds) {
+        if (gameIds == null || gameIds.isEmpty()) {
+            return List.of();
+        }
+        List<String> ids = gameIds.stream()
+                .filter(id -> id != null && !id.isBlank())
+                .map(String::trim)
+                .distinct()
+                .limit(MAX_PRICE_IDS)
+                .toList();
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        return dealMapper.findLowestPrices(ids);
     }
 
     /** 제목 부분일치 검색(게임 단위). 한글이면 스팀 매칭 우선. 빈 검색어는 빈 결과. */

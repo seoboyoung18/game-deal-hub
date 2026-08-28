@@ -199,6 +199,20 @@
     </select>
 
     <!-- ============ 게임 검색 (제목 부분일치, 게임 단위 최저가 요약) ============ -->
+    <!-- 가격 알림: 게임별 최저가 1행씩 (DISTINCT ON) -->
+    <select id="findLowestPrices" resultType="com.example.deal.dto.GamePriceSnapshot">
+        SELECT DISTINCT ON (d.game_id)
+               d.game_id, g.title, g.thumb_url,
+               d.deal_id, d.store_id, s.store_name,
+               d.sale_price, d.normal_price, d.savings, d.krw_sale_price
+        FROM deals d
+        JOIN games  g ON g.game_id  = d.game_id
+        JOIN stores s ON s.store_id = d.store_id
+        WHERE d.game_id IN
+        <foreach item="id" collection="gameIds" open="(" separator="," close=")">#{id}</foreach>
+        ORDER BY d.game_id, d.sale_price ASC, d.deal_id
+    </select>
+
     <select id="searchGames" resultType="com.example.deal.dto.GameSearchItem">
         SELECT g.game_id, g.title, g.thumb_url,
                MIN(d.sale_price)          AS min_sale_price,

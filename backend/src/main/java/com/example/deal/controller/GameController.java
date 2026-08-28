@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import com.example.deal.dto.GameDetailResponse;
+import com.example.deal.dto.GamePriceSnapshot;
 import com.example.deal.dto.GameSearchItem;
 import com.example.deal.dto.PageResponse;
 import com.example.deal.service.GameService;
@@ -30,6 +33,12 @@ public class GameController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return gameService.searchGames(q, page, size);
+    }
+
+    /** 가격 알림용 최저가 배치 조회. /{gameId} 보다 우선 매칭됨(리터럴 경로). */
+    @GetMapping("/prices")
+    public List<GamePriceSnapshot> prices(@RequestParam(required = false) List<String> ids) {
+        return gameService.getLowestPrices(ids);
     }
 
     /** 게임 상세 + 스토어별 가격 비교 (FR-06). */
